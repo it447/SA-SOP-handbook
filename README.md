@@ -1,4 +1,4 @@
-# Scale Army SOP Handbook
+# Scale Army SOP Handbook 
 
 This is the markdown source-of-truth vault for Scale Army's Standard Operating Procedures, built from the master SOP Handbook and its linked source documents.
 
