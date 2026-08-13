@@ -1,0 +1,51 @@
+---
+title: "Glossary for Recruitment/Delivery Team"
+department: recruitment
+category: glossary
+last_updated: 2026-07-20
+---
+
+- **DSU:** Daily Standup meeting (internal).
+- **IRS:** Internal Review Sheet (not client-facing).
+- **TRS:** Talent Review Sheet (client-facing).
+- **CRS:** Candidate Review Session — a 15-minute call with the client.
+- **Disco:** Discovery call — first call with a candidate, no client present, just the Scale Army team and the candidate.
+- **JD:** Job Description.
+- **SOP:** Standard Operating Procedure.
+- **SDR:** Sales Development Representative.
+- **Gross Salary:** What employees earn before taxes, benefits, and other payroll deductions.
+- **Net:** What employees earn after taxes, benefits, and other payroll deductions.
+- **AE:** Account Executive.
+- **AM:** Account Manager.
+- **Margin:** The fee added on top of a candidate's salary expectation, usually starting from $1,199.
+- **A/V:** Audio/visual check — verifying a candidate's audio and visual readiness before the client joins the interview.
+- **Scale (Slack):** The platform used for interview feedback and general team communication.
+- **QA:** Quality Assurance — checking that all necessary information is included in the job post and application form.
+- **Screening:** Watching videos and reviewing resumes to match candidates to a job.
+- **Offer Call:** A call extending the offer to a candidate, confirming they understand the conditions, start date, and salary before sending the offer letter.
+- **Vibe Check:** An assessment of a candidate's general demeanor/mood to gauge fit with a client or the team.
+- **Interview Block:** The client's dedicated time to interview a prospective candidate to assess fit.
+- **Candidate Feedback:** Notes sent after an interview block, where the AM shares how the meeting went and any action items.
+- **Slay/Nube of the Week:** A recognition for someone who achieved something notable, and someone who made a rookie mistake, during the week.
+- **MSA:** Master Service Agreement — comprehensive agreement between Scale Army and a client.
+- **Engagement Letter:** A contract between Scale Army and a client for immediately commencing the working relationship, ahead of a longer-form MSA.
+- **Circumvent:** When a candidate and client contact each other directly, outside Scale Army, regarding a role.
+- **ATS:** Application Tracking System.
+- **ERS:** External Review Sheet (client-facing).
+- **Bucket:** The group of candidates who applied for a specific job at a specific company.
+- **SE:** Salary Expectation.
+- **SA:** Scale Army.
+- **Load Shedding:** South African term for scheduled rolling power outages due to insufficient electricity supply.
+- **PTO:** Personal Time Off.
+- **App Packet:** A Google Drive folder containing a candidate's experience, completed take-home assignment, and video introduction.
+- **Candidate Experience Survey:** A monthly check-in call (through month three) to gather the candidate's feedback on their experience at their employer company.
+- **Cleaning:** Once a role is won or lost, moving applicants in the funnel to a general pool or archiving unqualified ones.
+- **Take-home:** An assessment sent by the client to the candidate (common for Marketing/Graphic Design roles).
+- **Tysm:** Thank you so much.
+- **Pipeline:** The pool of potential candidates being evaluated and moved through recruitment stages, from initial contact to placement.
+- **LOI:** Letter of Intent.
+- **HRIS:** Human Resource Information System (Deel).
+- **Stipend:** A reimbursed item or benefit provided by the company.
+- **1:1:** A private check-in conversation between an individual and HR/their manager.
+- **Gross Compensation:** What talent earns before taxes, benefits, and other payroll deductions.
+- **Net Compensation / NTC (Net to Candidate):** What talent earns after taxes, benefits, and other payroll deductions.
