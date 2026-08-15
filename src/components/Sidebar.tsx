@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { getDepartmentGroups } from "@/lib/content";
+import SidebarNav from "@/components/SidebarNav";
 
 /**
- * Server component: nav tree grouped by department (top-level SOPs/ folders).
+ * Server component: fetches the nav tree (grouped by department, from the
+ * top-level SOPs/ folders) and hands it to the client-side collapsible nav.
  */
 export default function Sidebar() {
   const groups = getDepartmentGroups();
@@ -15,27 +17,7 @@ export default function Sidebar() {
       >
         SA SOP Handbook
       </Link>
-      <ul className="space-y-4">
-        {groups.map((group) => (
-          <li key={group.department}>
-            <div className="font-medium text-sm capitalize mb-1 text-cream-dim">
-              {group.department.replace(/-/g, " ")}
-            </div>
-            <ul className="space-y-1 pl-2 border-l border-navy-soft">
-              {group.pages.map((page) => (
-                <li key={page.route}>
-                  <Link
-                    href={page.route}
-                    className="text-sm text-cream/70 hover:text-orange hover:underline"
-                  >
-                    {page.frontmatter.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+      <SidebarNav groups={groups} />
     </nav>
   );
 }
