@@ -117,25 +117,34 @@ function contentHash(text: string): string {
   return crypto.createHash("sha256").update(text).digest("hex");
 }
 
-async function main() {
+export interface IngestSummary {
+  notesFound: number;
+  totalChunks: number;
+  perFile: { filePath: string; chunks: number }[];
+}
+
+/**
+ * Runs the full ingest pass and returns a summary. Shared by the CLI
+ * entrypoint below (`npm run ingest`) and the protected `/api/admin/ingest`
+ * route, so the same logic works whether triggered from a local machine with
+ * `.env.local` set, or from Vercel where the env vars already live.
+ */
+export async function runIngest(): Promise<IngestSummary> {
   if (!process.env.VOYAGE_API_KEY) {
-    console.error(
+    throw new Error(
       "VOYAGE_API_KEY is not set. Copy .env.example to .env.local and fill it in before running ingest."
     );
-    process.exit(1);
   }
   if (!process.env.POSTGRES_URL) {
-    console.error(
+    throw new Error(
       "POSTGRES_URL is not set. Copy .env.example to .env.local and fill it in before running ingest."
     );
-    process.exit(1);
   }
 
   await ensureSchema();
 
   const pages = getContentIndex();
-  console.log(`Found ${pages.length} SOP notes under SOPs/.`);
-
+  const perFile: { filePath: string; chunks: number }[] = [];
   let totalChunks = 0;
 
   for (const page of pages) {
@@ -144,6 +153,7 @@ async function main() {
 
     if (chunks.length === 0) {
       await deleteStaleChunks(page.relPath, []);
+      perFile.push({ filePath: page.relPath, chunks: 0 });
       continue;
     }
 
@@ -173,13 +183,28 @@ async function main() {
     // longer matches (e.g. the file shrank or a section was removed).
     await deleteStaleChunks(page.relPath, hashes);
 
-    console.log(`  ingested ${page.relPath} (${chunks.length} chunks)`);
+    perFile.push({ filePath: page.relPath, chunks: chunks.length });
   }
 
-  console.log(`Done. Upserted ${totalChunks} chunks across ${pages.length} notes.`);
+  return { notesFound: pages.length, totalChunks, perFile };
 }
 
-main().catch((err) => {
-  console.error("Ingest failed:", err);
-  process.exit(1);
-});
+async function main() {
+  try {
+    const summary = await runIngest();
+    console.log(`Found ${summary.notesFound} SOP notes under SOPs/.`);
+    for (const f of summary.perFile) {
+      console.log(`  ingested ${f.filePath} (${f.chunks} chunks)`);
+    }
+    console.log(`Done. Upserted ${summary.totalChunks} chunks across ${summary.notesFound} notes.`);
+  } catch (err) {
+    console.error("Ingest failed:", err);
+    process.exit(1);
+  }
+}
+
+// Only auto-run when executed directly as a script (`npm run ingest`), not
+// when imported by the admin API route.
+if (require.main === module) {
+  main();
+}
