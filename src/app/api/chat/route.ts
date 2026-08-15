@@ -28,8 +28,14 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const { messages } = (await req.json()) as { messages: CoreMessage[] };
-  const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
-  const query = typeof lastUserMessage?.content === "string" ? lastUserMessage.content : "";
+
+  // Build the retrieval query from the last couple of user turns, not just
+  // the latest one in isolation — a vague follow-up like "what about for
+  // contractors?" needs the prior turn's topic to retrieve the right chunks.
+  const recentUserMessages = messages
+    .filter((m) => m.role === "user" && typeof m.content === "string")
+    .slice(-2) as { content: string }[];
+  const query = recentUserMessages.map((m) => m.content).join("\n");
 
   let sources: { title: string; url: string }[] = [];
   let contextBlock = "(no context retrieved)";
@@ -75,10 +81,18 @@ export async function POST(req: Request): Promise<Response> {
 
   const model = process.env.OPENROUTER_MODEL || "anthropic/claude-sonnet-5";
 
-  const systemPrompt = `You are the Scale Army internal knowledge-base assistant.
-Answer ONLY using the context below, which was retrieved from Scale Army's internal SOP handbook.
-If the answer is not contained in the context, say "I don't know — that isn't covered in the SOP handbook I have access to." Do not make anything up.
-When you do answer, cite the source note(s) you used by name.
+  const systemPrompt = `You are the Scale Army internal knowledge-base assistant — a helpful colleague who has read all the SOPs, not a document search tool.
+
+Ground every answer ONLY in the context below, retrieved from Scale Army's internal SOP handbook. But don't just quote or copy it verbatim:
+- Read the retrieved material, understand what it's actually saying, and explain it in your own words, the way a knowledgeable teammate would when someone asks them a question in Slack.
+- Synthesize across multiple retrieved chunks/sources when the question calls for it, rather than pasting one chunk at a time.
+- Answer follow-up questions conversationally, using the earlier turns in this conversation plus the newly retrieved context for the latest question — don't restart from scratch or re-explain things already covered unless the user asks you to.
+- If the user asks for something more specific, more concise, a checklist, or clarification, adapt your answer style to what they're asking for while staying grounded in the SOP content.
+- Keep answers reasonably concise by default — a clear explanation, not the full source text restated.
+
+If the answer isn't contained in the context, say "I don't know — that isn't covered in the SOP handbook I have access to." Do not make anything up or fill gaps with general knowledge about how other companies do things.
+
+When you answer, mention which SOP(s) the information came from by name (e.g. "per the Offboarding SOP...") so the user knows where to look for the full detail, but the source links shown in the UI already handle precise citation — you don't need to dump raw quotes to prove it.
 
 Context:
 ${contextBlock}`;
