@@ -30,14 +30,14 @@ export default async function WikiPage({ params }: { params: { slug: string[] } 
             <Search items={searchItems} />
           </div>
 
-          <div className="mb-4 text-xs uppercase tracking-wide text-gray-400 flex gap-3">
+          <div className="mb-4 text-xs uppercase tracking-wide text-cream-dim flex gap-3">
             {page.frontmatter.department && <span>{page.frontmatter.department}</span>}
             {page.frontmatter.category && <span>{page.frontmatter.category}</span>}
             {page.frontmatter.owner && <span>Owner: {page.frontmatter.owner}</span>}
             {page.frontmatter.last_updated && <span>Updated {page.frontmatter.last_updated}</span>}
           </div>
 
-          <h1 className="text-2xl font-semibold mb-6">{page.frontmatter.title}</h1>
+          <h1 className="text-2xl font-serif font-bold mb-6 text-cream">{page.frontmatter.title}</h1>
 
           <article
             className="markdown-body"
