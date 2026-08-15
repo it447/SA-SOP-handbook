@@ -73,7 +73,7 @@ export async function POST(req: Request): Promise<Response> {
     baseURL: "https://openrouter.ai/api/v1",
   });
 
-  const model = process.env.OPENROUTER_MODEL || "anthropic/claude-3.5-sonnet";
+  const model = process.env.OPENROUTER_MODEL || "anthropic/claude-sonnet-5";
 
   const systemPrompt = `You are the Scale Army internal knowledge-base assistant.
 Answer ONLY using the context below, which was retrieved from Scale Army's internal SOP handbook.
