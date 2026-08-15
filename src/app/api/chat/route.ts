@@ -83,18 +83,30 @@ When you do answer, cite the source note(s) you used by name.
 Context:
 ${contextBlock}`;
 
-  const result = await streamText({
-    model: openrouter(model),
-    system: systemPrompt,
-    messages,
-  });
+  try {
+    const result = await streamText({
+      model: openrouter(model),
+      system: systemPrompt,
+      messages,
+    });
 
-  // Vercel AI SDK data stream response, with retrieved sources attached as a
-  // stream annotation so the client can render "cited from" links alongside
-  // the streamed answer.
-  return result.toDataStreamResponse({
-    headers: {
-      "x-kb-sources": encodeURIComponent(JSON.stringify(sources)),
-    },
-  });
+    // Vercel AI SDK data stream response, with retrieved sources attached as a
+    // stream annotation so the client can render "cited from" links alongside
+    // the streamed answer.
+    return result.toDataStreamResponse({
+      headers: {
+        "x-kb-sources": encodeURIComponent(JSON.stringify(sources)),
+      },
+    });
+  } catch (err) {
+    // Surface the real OpenRouter/model error instead of a bare 500, since
+    // this is the step most likely to fail on a misconfigured model id,
+    // missing OpenRouter credit, or an invalid API key.
+    return Response.json(
+      {
+        error: `OpenRouter/Claude request failed: ${err instanceof Error ? err.message : String(err)}`,
+      },
+      { status: 502 }
+    );
+  }
 }
