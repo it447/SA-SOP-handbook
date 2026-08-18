@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Search from "@/components/Search";
-import { getContentIndex, getPageBySlugParts } from "@/lib/content";
+import { getContentIndex, getDepartmentLabel, getDisplayTitle, getPageBySlugParts } from "@/lib/content";
 import { renderMarkdownToHtml } from "@/lib/markdown";
 
 export function generateStaticParams() {
@@ -16,7 +16,7 @@ export default async function WikiPage({ params }: { params: { slug: string[] } 
 
   const html = await renderMarkdownToHtml(page.body);
   const searchItems = getContentIndex().map((p) => ({
-    title: p.frontmatter.title,
+    title: getDisplayTitle(p),
     route: p.route,
     department: p.frontmatter.department,
   }));
@@ -31,13 +31,13 @@ export default async function WikiPage({ params }: { params: { slug: string[] } 
           </div>
 
           <div className="mb-4 text-xs uppercase tracking-wide text-cream-dim flex gap-3">
-            {page.frontmatter.department && <span>{page.frontmatter.department}</span>}
+            {page.frontmatter.department && <span>{getDepartmentLabel(page.frontmatter.department)}</span>}
             {page.frontmatter.category && <span>{page.frontmatter.category}</span>}
             {page.frontmatter.owner && <span>Owner: {page.frontmatter.owner}</span>}
             {page.frontmatter.last_updated && <span>Updated {page.frontmatter.last_updated}</span>}
           </div>
 
-          <h1 className="text-2xl font-serif font-bold mb-6 text-cream">{page.frontmatter.title}</h1>
+          <h1 className="text-2xl font-serif font-bold mb-6 text-cream">{getDisplayTitle(page)}</h1>
 
           <article
             className="markdown-body"
