@@ -6,6 +6,7 @@ import {
   getFeaturedPage,
 } from "@/lib/content";
 import SidebarNav from "@/components/SidebarNav";
+import LogoutButton from "@/components/LogoutButton";
 
 /**
  * Server component: fetches the nav tree (grouped by department, from the
@@ -25,22 +26,27 @@ export default function Sidebar() {
   const featured = getFeaturedPage();
 
   return (
-    <nav className="w-64 shrink-0 bg-navy-deep border-r border-navy-soft p-4 overflow-y-auto h-full">
-      <Link
-        href="/"
-        className="block font-serif font-bold mb-4 text-sm uppercase tracking-wide text-cream"
-      >
-        SA SOP Handbook
-      </Link>
-      {featured && (
+    <nav className="w-64 shrink-0 bg-navy-deep border-r border-navy-soft p-4 overflow-y-auto h-full flex flex-col">
+      <div className="flex-1">
         <Link
-          href={featured.route}
-          className="block mb-4 rounded border border-orange/40 bg-orange/10 px-3 py-2 text-sm font-medium text-orange hover:bg-orange/20"
+          href="/"
+          className="block font-serif font-bold mb-4 text-sm uppercase tracking-wide text-cream"
         >
-          {getDisplayTitle(featured)}
+          SA SOP Handbook
         </Link>
-      )}
-      <SidebarNav groups={groups} />
+        {featured && (
+          <Link
+            href={featured.route}
+            className="block mb-4 rounded border border-orange/40 bg-orange/10 px-3 py-2 text-sm font-medium text-orange hover:bg-orange/20"
+          >
+            {getDisplayTitle(featured)}
+          </Link>
+        )}
+        <SidebarNav groups={groups} />
+      </div>
+      <div className="pt-4 mt-4 border-t border-navy-soft">
+        <LogoutButton />
+      </div>
     </nav>
   );
 }

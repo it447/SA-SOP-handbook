@@ -45,7 +45,7 @@ cp .env.example .env.local   # fill in the values described below
 npm run dev
 ```
 
-The app is gated by NextAuth.js (Auth.js v5) — every route except `/login` requires a session. Two sign-in options are wired up: GitHub OAuth (the intended login for the team) and a Credentials placeholder provider that accepts any non-empty username/password, so the app is click-through testable before real OAuth credentials exist.
+The app is invite-only. There is no public signup — accounts are created by an admin at `/admin` (unlocked with `ADMIN_SECRET`, not tied to any user account), which emails the invited person a temporary password via Resend. Every route except `/login`, `/admin`, and the auth API routes requires a valid session (see `src/middleware.ts`, `src/lib/session.ts`). Sessions and user accounts are stored in the same Vercel Postgres database used by the chatbot's vector store (`kb_users` / `kb_sessions` tables), not a separate service.
 
 ### Running ingest (chatbot's knowledge base)
 
@@ -64,7 +64,8 @@ None of the following are set in this repo — `.env.example` documents each wit
 - `OPENROUTER_API_KEY` / `OPENROUTER_MODEL` — OpenRouter key + model id (e.g. `anthropic/claude-3.5-sonnet`) for chat generation.
 - `VOYAGE_API_KEY` / `VOYAGE_MODEL` — Voyage AI key for embeddings (defaults to `voyage-2`, 1024-dim).
 - `POSTGRES_URL` — a Vercel Postgres (or any Postgres with the `pgvector` extension available) connection string.
-- `AUTH_SECRET` — random secret for signing NextAuth sessions (`openssl rand -base64 32`).
-- `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` — a GitHub OAuth App's credentials, callback URL `<site-url>/api/auth/callback/github`.
+- `ADMIN_SECRET` — shared secret that unlocks `/admin` (`openssl rand -base64 32`). Not tied to any user account — this is how the very first account gets created.
+- `RESEND_API_KEY` / `RESEND_FROM_EMAIL` — for sending invite emails. `RESEND_FROM_EMAIL` defaults to `onboarding@resend.dev`, which works without verifying a domain for quick testing; verify Scale Army's own domain in Resend for reliable delivery to real teammates.
+- `APP_URL` — optional; used to build the login link in invite emails. Falls back to the request's own host if unset.
 
-Until these are supplied, the site itself runs and renders all SOP content fine; only the GitHub login option and the chatbot's retrieval/generation are inert (they fail with a clear error message rather than crashing).
+Until these are supplied, the site itself runs and renders all SOP content fine; only the admin invite flow and the chatbot's retrieval/generation are inert (they fail with a clear error message rather than crashing). Note: if `RESEND_API_KEY` isn't set, `/admin` still works — the invite endpoint falls back to showing the generated temporary password directly in the admin UI instead of emailing it, so you can share it manually.
