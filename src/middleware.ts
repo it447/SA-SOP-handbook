@@ -11,6 +11,10 @@ import { getUserFromSessionToken, SESSION_COOKIE } from "@/lib/session";
  * session checked inside each admin route/page (see src/lib/session.ts,
  * ADMIN_SESSION_COOKIE), since unlocking /admin doesn't require (or grant)
  * a regular user account.
+ *
+ * /api/slack/* is also excluded — Slack calls it directly (no browser
+ * session exists), and that route authenticates each request itself via
+ * Slack's own request-signing scheme (see src/lib/slack.ts).
  */
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -20,6 +24,7 @@ export async function middleware(req: NextRequest) {
     pathname === "/admin" ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/admin") ||
+    pathname.startsWith("/api/slack") ||
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico";
 

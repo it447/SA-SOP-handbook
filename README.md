@@ -67,5 +67,21 @@ None of the following are set in this repo — `.env.example` documents each wit
 - `ADMIN_SECRET` — shared secret that unlocks `/admin` (`openssl rand -base64 32`). Not tied to any user account — this is how the very first account gets created.
 - `RESEND_API_KEY` / `RESEND_FROM_EMAIL` — for sending invite emails. `RESEND_FROM_EMAIL` defaults to `onboarding@resend.dev`, which works without verifying a domain for quick testing; verify Scale Army's own domain in Resend for reliable delivery to real teammates.
 - `APP_URL` — optional; used to build the login link in invite emails. Falls back to the request's own host if unset.
+- `SLACK_SIGNING_SECRET` / `SLACK_BOT_TOKEN` — for the Slack bot (see below).
 
-Until these are supplied, the site itself runs and renders all SOP content fine; only the admin invite flow and the chatbot's retrieval/generation are inert (they fail with a clear error message rather than crashing). Note: if `RESEND_API_KEY` isn't set, `/admin` still works — the invite endpoint falls back to showing the generated temporary password directly in the admin UI instead of emailing it, so you can share it manually.
+Until these are supplied, the site itself runs and renders all SOP content fine; only the admin invite flow, the chatbot's retrieval/generation, and the Slack bot are inert (they fail with a clear error message rather than crashing). Note: if `RESEND_API_KEY` isn't set, `/admin` still works — the invite endpoint falls back to showing the generated temporary password directly in the admin UI instead of emailing it, so you can share it manually.
+
+### Slack bot
+
+Same assistant as the web chat widget (shares its retrieval + prompt via `src/lib/assistant.ts`), reachable from Slack by @mentioning it in a channel or DMing it directly. Replies land in-thread. Slack doesn't support streaming a reply token-by-token the way the web widget does, so it waits for the full answer before posting once.
+
+To set it up:
+
+1. Go to **api.slack.com/apps** → **Create New App** → **From scratch** → name it (e.g. "Scale Army Assistant") → pick your workspace.
+2. **OAuth & Permissions** → under **Bot Token Scopes**, add: `app_mentions:read`, `chat:write`, `im:history`, `im:read`.
+3. **Event Subscriptions** → turn on → **Request URL**: `https://<your-deployed-url>/api/slack/events` (Slack will verify this URL immediately — the route handles the challenge automatically, but the deployment must already have `SLACK_SIGNING_SECRET` set for verification to succeed). Under **Subscribe to bot events**, add `app_mention` and `message.im`.
+4. **OAuth & Permissions** → **Install to Workspace** → copy the **Bot User OAuth Token** (starts with `xoxb-`) → `SLACK_BOT_TOKEN`.
+5. **Basic Information** → **App Credentials** → **Signing Secret** → `SLACK_SIGNING_SECRET`.
+6. Invite the bot to a channel (`/invite @Scale Army Assistant`) so it can be @mentioned there, or just DM it directly.
+
+If you change scopes or event subscriptions after installing, reinstall the app to the workspace for the change to take effect.

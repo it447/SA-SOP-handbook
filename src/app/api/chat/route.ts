@@ -1,6 +1,6 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { streamText, type CoreMessage } from "ai";
-import { retrieveRelevantChunks } from "@/lib/retrieve";
+import { buildSystemPrompt, retrieveContext } from "@/lib/assistant";
 import { VoyageConfigError } from "@/lib/embeddings";
 
 export const runtime = "nodejs";
@@ -10,6 +10,8 @@ export const dynamic = "force-dynamic";
  * Chat endpoint: embeds the incoming query via Voyage, retrieves the top-6
  * most similar chunks from kb_chunks (pgvector), and streams a Claude
  * (via OpenRouter) completion that's restricted to that retrieved context.
+ * Shares its retrieval + system prompt with the Slack bot (lib/assistant.ts),
+ * which answers non-streaming instead since Slack can't stream tokens.
  *
  * Nothing here touches Voyage/Postgres/OpenRouter until a request actually
  * comes in — all config/env reads happen inside the POST handler, so
@@ -41,17 +43,7 @@ export async function POST(req: Request): Promise<Response> {
   let contextBlock = "(no context retrieved)";
 
   try {
-    const chunks = await retrieveRelevantChunks(query, 6);
-    sources = chunks.map((c) => ({
-      title: c.heading || c.file_path,
-      url: c.page_url,
-    }));
-    contextBlock = chunks
-      .map(
-        (c, i) =>
-          `[Source ${i + 1}: ${c.heading || c.file_path} (${c.page_url})]\n${c.chunk_text}`
-      )
-      .join("\n\n---\n\n");
+    ({ contextBlock, sources } = await retrieveContext(query));
   } catch (err) {
     if (err instanceof VoyageConfigError) {
       return Response.json(
@@ -81,26 +73,10 @@ export async function POST(req: Request): Promise<Response> {
 
   const model = process.env.OPENROUTER_MODEL || "anthropic/claude-sonnet-5";
 
-  const systemPrompt = `You are the Scale Army internal knowledge-base assistant — a helpful colleague who has read all the SOPs, not a document search tool.
-
-Ground every answer ONLY in the context below, retrieved from Scale Army's internal SOP handbook. But don't just quote or copy it verbatim:
-- Read the retrieved material, understand what it's actually saying, and explain it in your own words, the way a knowledgeable teammate would when someone asks them a question in Slack.
-- Synthesize across multiple retrieved chunks/sources when the question calls for it, rather than pasting one chunk at a time.
-- Answer follow-up questions conversationally, using the earlier turns in this conversation plus the newly retrieved context for the latest question — don't restart from scratch or re-explain things already covered unless the user asks you to.
-- If the user asks for something more specific, more concise, a checklist, or clarification, adapt your answer style to what they're asking for while staying grounded in the SOP content.
-- Keep answers reasonably concise by default — a clear explanation, not the full source text restated.
-
-If the answer isn't contained in the context, say "I don't know — that isn't covered in the SOP handbook I have access to." Do not make anything up or fill gaps with general knowledge about how other companies do things.
-
-When you answer, mention which SOP(s) the information came from by name (e.g. "per the Offboarding SOP...") so the user knows where to look for the full detail, but the source links shown in the UI already handle precise citation — you don't need to dump raw quotes to prove it.
-
-Context:
-${contextBlock}`;
-
   try {
     const result = await streamText({
       model: openrouter(model),
-      system: systemPrompt,
+      system: buildSystemPrompt(contextBlock),
       messages,
     });
 
