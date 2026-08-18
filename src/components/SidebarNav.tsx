@@ -2,14 +2,25 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { DepartmentGroup } from "@/lib/content";
+
+/**
+ * Plain, pre-formatted shape for the client component — labels and display
+ * titles are computed server-side (in Sidebar.tsx, which can import
+ * lib/content's fs-backed helpers) and passed down as already-resolved
+ * strings, so this client component never needs to import fs-touching code.
+ */
+export interface DisplayGroup {
+  department: string;
+  label: string;
+  pages: { route: string; title: string }[];
+}
 
 /**
  * Collapsible nav tree: each department header toggles its page list open
  * or closed. All groups start collapsed so only the department headers show
  * until the user clicks one.
  */
-export default function SidebarNav({ groups }: { groups: DepartmentGroup[] }) {
+export default function SidebarNav({ groups }: { groups: DisplayGroup[] }) {
   const [openDepartments, setOpenDepartments] = useState<Set<string>>(new Set());
 
   function toggle(department: string) {
@@ -34,9 +45,9 @@ export default function SidebarNav({ groups }: { groups: DepartmentGroup[] }) {
               type="button"
               onClick={() => toggle(group.department)}
               aria-expanded={isOpen}
-              className="w-full flex items-center justify-between gap-2 text-sm font-medium capitalize text-cream-dim hover:text-cream py-1"
+              className="w-full flex items-center justify-between gap-2 text-sm font-medium text-cream-dim hover:text-cream py-1"
             >
-              <span>{group.department.replace(/-/g, " ")}</span>
+              <span>{group.label}</span>
               <span
                 className={
                   "text-xs transition-transform " + (isOpen ? "rotate-90" : "")
@@ -54,7 +65,7 @@ export default function SidebarNav({ groups }: { groups: DepartmentGroup[] }) {
                       href={page.route}
                       className="text-sm text-cream/70 hover:text-orange hover:underline"
                     >
-                      {page.frontmatter.title}
+                      {page.title}
                     </Link>
                   </li>
                 ))}

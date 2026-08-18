@@ -157,13 +157,60 @@ export interface DepartmentGroup {
   pages: PageEntry[];
 }
 
-/** Group pages by their top-level SOPs/ folder (the "department"). */
+/** Folder name -> department slug excluded from normal browsable groups (its
+ * one note is surfaced as a pinned/featured link instead — see
+ * FEATURED_STEM below). */
+const FEATURED_DEPARTMENT = "sopsop";
+const FEATURED_STEM = "how-to-write-an-sop";
+const FEATURED_TITLE = "How to Write an SOP at Scale Army";
+
+/** Department folder name -> full display label. Anything not listed here
+ * falls back to replacing hyphens with spaces and capitalizing each word. */
+const DEPARTMENT_LABELS: Record<string, string> = {
+  hr: "Human Resources",
+  it: "Information Technology",
+};
+
+export function getDepartmentLabel(department: string): string {
+  if (DEPARTMENT_LABELS[department]) return DEPARTMENT_LABELS[department];
+  return department
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+/**
+ * Display title for a page: the one SOP-writing-guide note gets a fixed
+ * featured title (set in the vault's frontmatter or not, doesn't matter —
+ * this always wins for that specific note); every other note has the
+ * standalone word "SOP" stripped from its title for display, without
+ * touching the underlying frontmatter/vault content.
+ */
+export function getDisplayTitle(page: PageEntry): string {
+  if (page.stem === FEATURED_STEM) return FEATURED_TITLE;
+  return page.frontmatter.title
+    .replace(/\bSOP\b\s*:?/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/^[\s:–-]+|[\s:–-]+$/g, "")
+    .trim();
+}
+
+/** The pinned "how to write an SOP" note, surfaced outside the normal
+ * department groups as a featured link. */
+export function getFeaturedPage(): PageEntry | undefined {
+  return getContentIndex().find((entry) => entry.stem === FEATURED_STEM);
+}
+
+/** Group pages by their top-level SOPs/ folder (the "department"), excluding
+ * the featured SOP-writing-guide note's own folder (surfaced separately via
+ * getFeaturedPage()). */
 export function getDepartmentGroups(): DepartmentGroup[] {
   const index = getContentIndex();
   const groups = new Map<string, PageEntry[]>();
 
   for (const entry of index) {
     const dept = entry.slugParts[0] ?? "misc";
+    if (dept === FEATURED_DEPARTMENT) continue;
     const list = groups.get(dept) ?? [];
     list.push(entry);
     groups.set(dept, list);
@@ -172,7 +219,7 @@ export function getDepartmentGroups(): DepartmentGroup[] {
   return Array.from(groups.entries())
     .map(([department, pages]) => ({
       department,
-      pages: pages.sort((a, b) => a.frontmatter.title.localeCompare(b.frontmatter.title)),
+      pages: pages.sort((a, b) => getDisplayTitle(a).localeCompare(getDisplayTitle(b))),
     }))
     .sort((a, b) => a.department.localeCompare(b.department));
 }
