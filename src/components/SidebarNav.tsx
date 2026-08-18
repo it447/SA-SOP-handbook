@@ -45,7 +45,7 @@ export default function SidebarNav({ groups }: { groups: DisplayGroup[] }) {
               type="button"
               onClick={() => toggle(group.department)}
               aria-expanded={isOpen}
-              className="w-full flex items-center justify-between gap-2 text-sm font-medium text-cream-dim hover:text-cream py-1"
+              className="w-full flex items-center justify-between gap-2 text-sm font-medium text-cream-dim hover:text-orange px-2 py-1 rounded transition-colors hover:bg-orange/10"
             >
               <span>{group.label}</span>
               <span
