@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function LoginForm() {
@@ -70,6 +71,13 @@ function LoginForm() {
         Access is invite-only. If you need an account, ask whoever administers this handbook to
         invite you.
       </p>
+
+      <Link
+        href="/admin"
+        className="block text-center text-xs text-cream-dim hover:text-orange mt-6 pt-4 border-t border-navy-soft"
+      >
+        Log in as admin
+      </Link>
     </div>
   );
 }
