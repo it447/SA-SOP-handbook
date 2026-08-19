@@ -219,7 +219,15 @@ export function getDepartmentGroups(): DepartmentGroup[] {
   return Array.from(groups.entries())
     .map(([department, pages]) => ({
       department,
-      pages: pages.sort((a, b) => getDisplayTitle(a).localeCompare(getDisplayTitle(b))),
+      // Glossary pages pin to the top of each department's list (usually the
+      // first thing someone wants when opening a department they're less
+      // familiar with); everything else sorts alphabetically after that.
+      pages: pages.sort((a, b) => {
+        const aGlossary = a.frontmatter.category?.toLowerCase() === "glossary";
+        const bGlossary = b.frontmatter.category?.toLowerCase() === "glossary";
+        if (aGlossary !== bGlossary) return aGlossary ? -1 : 1;
+        return getDisplayTitle(a).localeCompare(getDisplayTitle(b));
+      }),
     }))
     .sort((a, b) => a.department.localeCompare(b.department));
 }
