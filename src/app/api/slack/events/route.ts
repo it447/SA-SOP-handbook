@@ -93,9 +93,14 @@ export async function POST(req: NextRequest) {
 
   try {
     const { answer, sources } = await answerQuestion(question);
+    // Slack's <url|text> link syntax needs an absolute URL — page_url from
+    // the retriever is a relative site path (e.g. "/hr/..."), which Slack
+    // can't render as a link and just shows as broken raw text instead.
+    const appUrl = process.env.APP_URL || `https://${req.headers.get("host")}`;
     const sourcesBlock =
       sources.length > 0
-        ? "\n\n*Sources:*\n" + sources.map((s) => `• <${s.url}|${s.title}>`).join("\n")
+        ? "\n\n*Sources:*\n" +
+          sources.map((s) => `• <${appUrl}${s.url}|${s.title}>`).join("\n")
         : "";
 
     await postSlackMessage({
