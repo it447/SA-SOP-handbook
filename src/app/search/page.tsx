@@ -1,9 +1,9 @@
 import Sidebar from "@/components/Sidebar";
 import SearchPageResults from "@/components/SearchPageResults";
-import { getContentIndex, getDisplayTitle } from "@/lib/content";
+import { getVisibleContentIndex, getDisplayTitle } from "@/lib/content";
 
 export default function SearchPage() {
-  const items = getContentIndex().map((p) => ({
+  const items = getVisibleContentIndex().map((p) => ({
     title: getDisplayTitle(p),
     route: p.route,
     department: p.frontmatter.department,

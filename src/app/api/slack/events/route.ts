@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
     const sourcesBlock =
       sources.length > 0
         ? "\n\n*Sources:*\n" +
-          sources.map((s) => `• <${appUrl}${s.url}|${s.title}>`).join("\n")
+          sources.map((s) => (s.url ? `• <${appUrl}${s.url}|${s.title}>` : `• ${s.title}`)).join("\n")
         : "";
 
     await postSlackMessage({

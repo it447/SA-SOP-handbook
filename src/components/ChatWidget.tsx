@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 interface Source {
   title: string;
-  url: string;
+  url: string | null;
 }
 
 const CHAT_HISTORY_KEY = "sa-kb-chat-history";
@@ -106,11 +106,15 @@ export default function ChatWidget() {
           <div className="border-t border-navy-soft pt-2 mt-2">
             <div className="text-xs font-medium text-cream-dim mb-1">Sources</div>
             <ul className="space-y-1">
-              {sources.map((s) => (
-                <li key={s.url}>
-                  <a href={s.url} className="text-xs text-orange hover:underline">
-                    {s.title}
-                  </a>
+              {sources.map((s, i) => (
+                <li key={s.url ?? `${i}-${s.title}`}>
+                  {s.url ? (
+                    <a href={s.url} className="text-xs text-orange hover:underline">
+                      {s.title}
+                    </a>
+                  ) : (
+                    <span className="text-xs text-cream-dim">{s.title}</span>
+                  )}
                 </li>
               ))}
             </ul>
