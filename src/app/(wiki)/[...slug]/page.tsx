@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Search from "@/components/Search";
-import { getContentIndex, getDepartmentLabel, getDisplayTitle, getPageBySlugParts } from "@/lib/content";
+import { getVisibleContentIndex, getDepartmentLabel, getDisplayTitle, getPageBySlugParts } from "@/lib/content";
 import { renderMarkdownToHtml } from "@/lib/markdown";
 
 export function generateStaticParams() {
-  return getContentIndex().map((page) => ({ slug: page.slugParts }));
+  return getVisibleContentIndex().map((page) => ({ slug: page.slugParts }));
 }
 
 export default async function WikiPage({ params }: { params: { slug: string[] } }) {
@@ -15,7 +15,7 @@ export default async function WikiPage({ params }: { params: { slug: string[] } 
   }
 
   const html = await renderMarkdownToHtml(page.body);
-  const searchItems = getContentIndex().map((p) => ({
+  const searchItems = getVisibleContentIndex().map((p) => ({
     title: getDisplayTitle(p),
     route: p.route,
     department: p.frontmatter.department,

@@ -1,10 +1,14 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { retrieveRelevantChunks } from "@/lib/retrieve";
+import { getContentIndex } from "@/lib/content";
 
 export interface AssistantSource {
   title: string;
-  url: string;
+  /** Null for chunks from a `hidden: true` page — that page has no public
+   * route to link to (see PageFrontmatter.hidden), so the UI should render
+   * this as plain text instead of a link. */
+  url: string | null;
 }
 
 /**
@@ -42,7 +46,15 @@ export async function retrieveContext(
   query: string
 ): Promise<{ contextBlock: string; sources: AssistantSource[] }> {
   const chunks = await retrieveRelevantChunks(query, 6);
-  const sources = chunks.map((c) => ({ title: c.heading || c.file_path, url: c.page_url }));
+  const index = getContentIndex();
+  const sources: AssistantSource[] = chunks.map((c) => {
+    const page = index.find((p) => p.relPath === c.file_path);
+    const hidden = page?.frontmatter.hidden === true;
+    return {
+      title: hidden ? `Internal Legal Reference: ${c.heading || page?.frontmatter.title || c.file_path}` : c.heading || c.file_path,
+      url: hidden ? null : c.page_url,
+    };
+  });
   const contextBlock =
     chunks.length > 0
       ? chunks

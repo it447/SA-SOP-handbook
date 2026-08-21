@@ -1,6 +1,6 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { streamText, type CoreMessage } from "ai";
-import { buildSystemPrompt, retrieveContext } from "@/lib/assistant";
+import { buildSystemPrompt, retrieveContext, type AssistantSource } from "@/lib/assistant";
 import { VoyageConfigError } from "@/lib/embeddings";
 
 export const runtime = "nodejs";
@@ -39,7 +39,7 @@ export async function POST(req: Request): Promise<Response> {
     .slice(-2) as { content: string }[];
   const query = recentUserMessages.map((m) => m.content).join("\n");
 
-  let sources: { title: string; url: string }[] = [];
+  let sources: AssistantSource[] = [];
   let contextBlock = "(no context retrieved)";
 
   try {

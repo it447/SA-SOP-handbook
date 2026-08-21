@@ -18,6 +18,10 @@ export interface PageFrontmatter {
   category?: string;
   owner?: string;
   last_updated?: string;
+  /** When true, this page is excluded from the site entirely (nav, search,
+   * and the wiki route itself 404s) but still embedded for the chatbot to
+   * use as knowledge — see docs/ for the access-control caveat on this. */
+  hidden?: boolean;
 }
 
 export interface PageHeading {
@@ -118,6 +122,7 @@ export function getContentIndex(): PageEntry[] {
       category: toStringOrUndefined(fm.category),
       owner: toStringOrUndefined(fm.owner),
       last_updated: toStringOrUndefined(fm.last_updated),
+      hidden: fm.hidden === true,
     };
 
     return {
@@ -141,9 +146,16 @@ export function invalidateContentIndex(): void {
   cachedIndex = null;
 }
 
+/** All pages the site itself should ever list, nav, or search — excludes
+ * `hidden: true` pages, which are chatbot-knowledge-only (see PageFrontmatter). */
+export function getVisibleContentIndex(): PageEntry[] {
+  return getContentIndex().filter((entry) => !entry.frontmatter.hidden);
+}
+
 export function getPageBySlugParts(slugParts: string[]): PageEntry | undefined {
   const target = slugParts.join("/");
-  return getContentIndex().find((entry) => entry.slugParts.join("/") === target);
+  // Hidden pages 404 like any nonexistent route — not just absent from nav.
+  return getVisibleContentIndex().find((entry) => entry.slugParts.join("/") === target);
 }
 
 /** Find a page by filename stem (case-insensitive) — used for wikilink resolution. */
@@ -205,7 +217,7 @@ export function getFeaturedPage(): PageEntry | undefined {
  * the featured SOP-writing-guide note's own folder (surfaced separately via
  * getFeaturedPage()). */
 export function getDepartmentGroups(): DepartmentGroup[] {
-  const index = getContentIndex();
+  const index = getVisibleContentIndex();
   const groups = new Map<string, PageEntry[]>();
 
   for (const entry of index) {
