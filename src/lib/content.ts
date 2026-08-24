@@ -144,6 +144,8 @@ export function getContentIndex(): PageEntry[] {
 /** Clears the memoized index — useful for scripts/tests that run long-lived. */
 export function invalidateContentIndex(): void {
   cachedIndex = null;
+  cachedOutgoing = null;
+  cachedBacklinks = null;
 }
 
 /** All pages the site itself should ever list, nav, or search — excludes
@@ -162,6 +164,78 @@ export function getPageBySlugParts(slugParts: string[]): PageEntry | undefined {
 export function getPageByStem(stem: string): PageEntry | undefined {
   const target = stem.toLowerCase();
   return getContentIndex().find((entry) => entry.stem.toLowerCase() === target);
+}
+
+/** Every `[[Note]]` / `[[Note|Alias]]` / `![[Note]]` target stem referenced in
+ * a page's raw body, matching the same syntax lib/markdown.ts resolves for
+ * rendering. Used to build the note-to-note link graph. */
+function extractWikilinkStems(body: string): string[] {
+  const stems: string[] = [];
+  const pattern = /!?\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(body)) !== null) {
+    stems.push(match[1].trim());
+  }
+  return stems;
+}
+
+let cachedOutgoing: Map<string, PageEntry[]> | null = null;
+let cachedBacklinks: Map<string, PageEntry[]> | null = null;
+
+function buildLinkGraph(): { outgoing: Map<string, PageEntry[]>; backlinks: Map<string, PageEntry[]> } {
+  if (cachedOutgoing && cachedBacklinks) {
+    return { outgoing: cachedOutgoing, backlinks: cachedBacklinks };
+  }
+
+  const index = getContentIndex();
+  const outgoing = new Map<string, PageEntry[]>();
+  const backlinks = new Map<string, PageEntry[]>();
+
+  for (const page of index) {
+    const targets: PageEntry[] = [];
+    for (const stem of extractWikilinkStems(page.body)) {
+      const target = getPageByStem(stem);
+      // Skip self-links and anything that failed to resolve.
+      if (!target || target.relPath === page.relPath) continue;
+      targets.push(target);
+
+      const existingBacklinks = backlinks.get(target.relPath) ?? [];
+      existingBacklinks.push(page);
+      backlinks.set(target.relPath, existingBacklinks);
+    }
+    outgoing.set(page.relPath, targets);
+  }
+
+  cachedOutgoing = outgoing;
+  cachedBacklinks = backlinks;
+  return { outgoing, backlinks };
+}
+
+/** Pages this page's wikilinks point to, in the order they first appear. */
+export function getOutgoingLinks(page: PageEntry): PageEntry[] {
+  return buildLinkGraph().outgoing.get(page.relPath) ?? [];
+}
+
+/** Pages elsewhere in the vault that link to this page via a wikilink. */
+export function getBacklinks(page: PageEntry): PageEntry[] {
+  return buildLinkGraph().backlinks.get(page.relPath) ?? [];
+}
+
+/** Related SOPs for site navigation: the union of a page's outgoing links
+ * and its backlinks, deduplicated, with hidden pages filtered out (they
+ * aren't linkable from the public site regardless of which direction the
+ * link graph found them from). */
+export function getRelatedPages(page: PageEntry): PageEntry[] {
+  const combined = [...getOutgoingLinks(page), ...getBacklinks(page)];
+  const seen = new Set<string>();
+  const related: PageEntry[] = [];
+  for (const candidate of combined) {
+    if (candidate.frontmatter.hidden) continue;
+    if (seen.has(candidate.relPath)) continue;
+    seen.add(candidate.relPath);
+    related.push(candidate);
+  }
+  return related;
 }
 
 export interface DepartmentGroup {

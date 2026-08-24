@@ -1,7 +1,14 @@
 import { notFound } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Search from "@/components/Search";
-import { getVisibleContentIndex, getDepartmentLabel, getDisplayTitle, getPageBySlugParts } from "@/lib/content";
+import Link from "next/link";
+import {
+  getVisibleContentIndex,
+  getDepartmentLabel,
+  getDisplayTitle,
+  getPageBySlugParts,
+  getRelatedPages,
+} from "@/lib/content";
 import { renderMarkdownToHtml } from "@/lib/markdown";
 
 export function generateStaticParams() {
@@ -15,6 +22,7 @@ export default async function WikiPage({ params }: { params: { slug: string[] } 
   }
 
   const html = await renderMarkdownToHtml(page.body);
+  const relatedPages = getRelatedPages(page);
   const searchItems = getVisibleContentIndex().map((p) => ({
     title: getDisplayTitle(p),
     route: p.route,
@@ -43,6 +51,21 @@ export default async function WikiPage({ params }: { params: { slug: string[] } 
             className="markdown-body"
             dangerouslySetInnerHTML={{ __html: html }}
           />
+
+          {relatedPages.length > 0 && (
+            <div className="mt-10 pt-6 border-t border-cream/10">
+              <h2 className="text-xs uppercase tracking-wide text-cream-dim mb-3">Related SOPs</h2>
+              <ul className="flex flex-col gap-2">
+                {relatedPages.map((related) => (
+                  <li key={related.relPath}>
+                    <Link href={related.route} className="text-sm text-orange hover:underline">
+                      {getDisplayTitle(related)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </main>
     </div>
