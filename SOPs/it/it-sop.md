@@ -16,4 +16,4 @@ IT Team, HR Team, Account Managers (AMs), and Leadership.
 
 ## Note
 
-The IT procedures live across multiple documents inside a shared IT SOP folder rather than a single doc. Flag to the IT owner (Seif Farid) if you need the individual procedures pulled into this vault as separate files.
+The IT procedures live across multiple documents inside a shared IT SOP folder rather than a single doc. Flag to the IT owner (Seif Farid) if you need the individual procedures pulled into this vault as separate files. See [[keeper-password-manager-sop|the Keeper Password Manager SOP]] and [[automation-hub-sop|the Automation Hub SOP]] for two of those procedures already pulled in.
