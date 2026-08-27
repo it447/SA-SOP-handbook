@@ -17,7 +17,7 @@ HR Team, Account Managers (AMs), and Leadership.
 ## Offboarding scenarios covered
 
 - **Failure to pass the trial period:** the talent doesn't meet expectations during trial and the contract isn't extended.
-- **Underperformance after PIP/Boost plans:** the talent continues to underperform after a performance improvement or boost plan, with no observed improvement.
+- **Underperformance after [[disciplinary-process-sop|PIP]]/Boost plans:** the talent continues to underperform after a performance improvement or boost plan, with no observed improvement.
 - **Voluntary resignation:** the talent resigns and gives notice.
 
 ## Procedure
@@ -54,5 +54,5 @@ HR Team, Account Managers (AMs), and Leadership.
 - Confirm the Deel offboarding is fully complete before moving to the next step.
 
 ### Step 7: Update the internal payroll database
-- Update the internal payroll and internal-tracking spreadsheets to reflect the termination, ensuring payroll records are adjusted for the next cycle.
+- Update the internal payroll and internal-tracking spreadsheets to reflect the termination, ensuring payroll records are adjusted for the next cycle, and flag any related [[client-billing-and-invoicing-sop|client billing adjustments]] to Finance.
 - Confirm the update is saved and notify relevant stakeholders (HR, payroll) of the change.

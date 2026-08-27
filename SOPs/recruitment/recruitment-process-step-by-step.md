@@ -55,7 +55,7 @@ Sales, Client Success (CS), Account Managers (AMs), Recruiters, Recruiting Leade
 ## Stage 5: Candidate Evaluation & Preparation
 
 **Step 9 — Client Feedback & Candidate Confirmation:**
-- Client provides feedback on submitted candidates. For shortlisted candidates, the recruiter schedules a 15-minute Discovery Call and reconfirms salary expectations, relevant experience, and interest/availability.
+- Client provides feedback on submitted candidates. For shortlisted candidates, the recruiter schedules a 15-minute [[glossary-recruitment-delivery|Discovery Call]] and reconfirms salary expectations, relevant experience, and interest/availability.
 
 **Step 9B — Candidate Preparation:**
 - The AM prepares prep material (client overview, company info, role details, interview expectations) and the recruiter shares it with candidates.

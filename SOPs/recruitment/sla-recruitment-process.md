@@ -21,7 +21,7 @@ Recruiters, Account Managers (AMs), Sourcing and Marketing Team, Delivery Teams.
 - **Day 2 — Batch 0 Sent:** Batch 0 candidates go to the AM and client via email.
 - **Day 3 — Kickoff Call (KOC):** Finalize the JD, budget, and hiring priorities; set expectations (see the KOC SOP and script). **If the KOC doesn't happen by Day 3, or expectations change from the start, the clock resets** — the team gains 2 extra days to find candidates.
 - **Day 3–5 — Continue Screening & Vetting:** Sourcers and recruiters refine the pool and shortlist the best candidates.
-- **Day 6 — Shortlist to AM:** Recruiter sends a shortlist to the AM, then sends the IRS (Internal Review Sheet) by end of day once approved. AMs should respond ASAP and push back if candidates aren't strong enough (see the Internal Candidate Review SOP).
+- **Day 6 — Shortlist to AM:** Recruiter sends a shortlist to the AM, then sends the [[glossary-recruitment-delivery|IRS]] (Internal Review Sheet) by end of day once approved. AMs should respond ASAP and push back if candidates aren't strong enough (see the Internal Candidate Review SOP).
 - **Day 7 — Refined IRS or TRS Sent:** Recruiter refines the IRS if needed and sends an updated version; if no refinement is needed, the AM sends the TRS (Talent Review Sheet) to the client.
 - **Day 8 — CRS Call & Client Approval:** The Candidate Review Sheet is prepared and sent to the client; the client reviews and approves candidates to proceed to interviews. If expectations change here, the clock resets to Day 0.
 - **Day 10–13 — Disco Calls:** Held within 2 days after the TRS batch is sent, with shortlisted candidates.

@@ -8,7 +8,7 @@ last_updated: 2026-07-20
 
 ## Goal
 
-Outline procedures for using HubSpot effectively — creating lists, properties, and reports; the correct procedure for building workflows; and how to handle HubSpot deals without a signed MSA.
+See the [[glossary-it-hubspot|IT/HubSpot Glossary]] for terminology used below. Outline procedures for using HubSpot effectively — creating lists, properties, and reports; the correct procedure for building workflows; and how to handle HubSpot deals without a signed MSA.
 
 ## Who this is for
 

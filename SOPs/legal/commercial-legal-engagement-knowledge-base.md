@@ -169,6 +169,8 @@ Applies to **Scale Army (PLTWG LLC)**. PT = part-time; FT = full-time; GM = gros
 
 ## MSA negotiation matrix — what is negotiable, what needs approval, what is locked
 
+See also the [[legal-knowledge-base-scale-army-sapo|Legal Knowledge Base]]'s four-tier negotiation matrix framework and its non-solicit and dispute-resolution positions for the staffing/EOR side.
+
 Applies to **Scale Army's (PLTWG LLC)** standard **Master Services Agreement (MSA)**. GM = gross margin; IP = intellectual property; PTO = paid time off; IC = independent contractor; ACH = Automated Clearing House; TCPA = Telephone Consumer Protection Act; CCPA = California Consumer Privacy Act.
 
 | MSA section | Standard / open to negotiate | Requires management approval | Non-negotiable / legal lockdown | Context |
@@ -207,7 +209,7 @@ Applies to **Scale Army (PLTWG LLC)**. GM = gross margin. These are the fixed nu
 - **Liability cap:** **one month's fee (locked)**.
 - **Credit reuse expiry:** **12 months (locked)**.
 - **Confidentiality/subpoena notice:** **10 days**.
-- **Buy-out formula (verbatim from source):** "**Fixed: $7k / <3k or 19.5% annual ≥3k.**" See "Open / unresolved" — the exact meaning of this shorthand is not spelled out in the source.
+- **Buy-out formula (verbatim from source):** "**Fixed: $7k / <3k or 19.5% annual ≥3k.**" See "Open / unresolved" — the exact meaning of this shorthand is not spelled out in the source. See also the [[msa-contracting-legal-commercial-guardrails|MSA Contracting Legal & Commercial Guardrails]] "Buyout of Scale Army Talent" section for the reconstructed formula.
 
 *Also asked as:* "What's our minimum margin?", "How much are non-solicit damages?", "What's the liability cap?", "What's the buy-out fee?", "What's the discount ceiling?"
 

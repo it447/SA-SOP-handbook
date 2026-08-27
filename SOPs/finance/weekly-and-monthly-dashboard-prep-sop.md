@@ -8,7 +8,7 @@ last_updated: 2026-07-20
 
 ## Goal
 
-Establish the process for preparing weekly and monthly financial dashboards — gathering data, formatting reports, and feeding the SA Business Health Report for leadership.
+Establish the process for preparing weekly and monthly financial dashboards — gathering data, formatting reports, and feeding the [[glossary-finance-operations|SA Business Health Report]] for leadership.
 
 ## Who this is for
 

@@ -61,7 +61,7 @@ Paid in full after 90 days for the first 3 successful referrals; after that, 50%
 |---|---|---|
 | Internal or external | $1,000 | Paid once the client signs the MSA and the first search officially begins (kickoff scheduled or launched) |
 
-Bonus must not exceed 8% of the client's projected annual margin. If no candidate is hired within 90 days of the MSA being signed, Scale Army reserves the right to adjust or revoke the bonus. (AE/AM/CS upsell referrals follow the separate $150 reactive rule in the Commission & Compensation Guidelines — see `commission-administration-sop.md`.)
+Bonus must not exceed 8% of the client's projected annual margin. If no candidate is hired within 90 days of the MSA being signed, Scale Army reserves the right to adjust or revoke the bonus. (AE/AM/CS upsell referrals follow the separate $150 reactive rule in the Commission & Compensation Guidelines — see the [[commission-administration-sop|Commission Administration SOP]].)
 
 ## General rules
 

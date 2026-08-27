@@ -16,7 +16,7 @@ HR Team, Managers, and Leadership.
 
 ## What is a Hint?
 
-A Hint is an official step in the disciplinary process — a structured feedback and correction stage designed to help a talent identify areas for improvement, understand clear expectations, and demonstrate progress.
+A [[glossary-hr|Hint]] is an official step in the disciplinary process — a structured feedback and correction stage designed to help a talent identify areas for improvement, understand clear expectations, and demonstrate progress.
 
 ## When the Hint system may be applied
 

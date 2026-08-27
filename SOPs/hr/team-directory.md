@@ -17,6 +17,8 @@ last_updated: 2026-08-19
 
 **Total headcount:** 71
 
+See the [[glossary-hr|HR Glossary]] for definitions of role/title terminology used below.
+
 ---
 
 ## Operations and Management

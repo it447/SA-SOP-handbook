@@ -37,7 +37,7 @@ A deposit not paid within 72 hours of a call is usually lost to momentum — the
 ## Exit & kill rules
 
 - **Explicit "no" / "not now" / "we paused" → stop immediately** and move to long-term nurture. Never run the next touch on someone who has already declined.
-- **Deposit paid at any point → exit the sequence** and trigger onboarding.
+- **Deposit paid at any point → exit the sequence** and trigger onboarding. Once the deposit is signed, see the [[sales-training-ae-onboarding-sop|Sales Training / AE Onboarding SOP]] for the client hand-off steps that follow.
 - **No response after Day 12 → move to long-term nurture.**
 
 ## SDR asset checklist (build once, reuse per deal)

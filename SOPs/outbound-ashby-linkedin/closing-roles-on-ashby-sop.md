@@ -8,7 +8,7 @@ last_updated: 2026-07-20
 
 ## Goal
 
-Correctly close roles in Ashby — whether won or lost — ensuring data accuracy and consistent internal reporting.
+Correctly close roles in [[glossary-outbound|Ashby]] — whether won or lost — ensuring data accuracy and consistent internal reporting.
 
 ## Who this is for
 

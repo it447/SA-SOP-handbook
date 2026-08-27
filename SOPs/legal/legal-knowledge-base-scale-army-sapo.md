@@ -48,6 +48,8 @@ Those risks are consistently reframed as **Client–Talent matters**, governed b
 
 **Also asked as:** how do we triage client redlines; what are the negotiation tiers; can I grant this change; when do I escalate.
 
+See also the [[commercial-legal-engagement-knowledge-base|Commercial Legal & Engagement Knowledge Base]] MSA negotiation matrix, dispute-resolution policy, and non-solicit guardrails for Scale Army's pricing/commercial side.
+
 All client-requested changes to a Scale Army MSA/EL/RSA are evaluated against four standing tiers:
 
 1. **Open to Negotiate** — freely grantable at the deal level.
@@ -92,6 +94,8 @@ The following are standing Non-Negotiable / Legal Lockdown items. Each requires 
 ## Liability cap and the damages exclusion (illusory-cap principle)
 
 **Also asked as:** why is raising the cap pointless; what is the "under no circumstances" exclusion; the cap is a red herring; illusory cap.
+
+See also the liability cap discussion in the [[msa-contracting-legal-commercial-guardrails|MSA Contracting Legal & Commercial Guardrails]] ("Liability Allocation" sections) for the AI-services and legacy-staffing cap precedents.
 
 The standard Scale Army liability clause pairs a **one-month-of-fees cap** with a broad **damages exclusion** that reads (in the staffing template) that "under no circumstances" is Scale Army liable for direct, indirect, incidental, special, or consequential damages, IP, negligence, or data loss/breach — "even if... the result of Talent's actions."
 

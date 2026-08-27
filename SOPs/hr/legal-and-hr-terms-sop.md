@@ -16,7 +16,7 @@ HR Team, Legal Team, and Leadership.
 
 ## Why this matters
 
-A primary distinction between employees and contractors is the degree of control over their work activities. Communicate clearly with contractors so they understand their freedom to choose when and how they complete their tasks. When engaging with contractors, make sure they're aware of their status, agree with their contractual arrangements, and understand their own responsibilities for taxes and local regulations.
+See the [[glossary-hr|HR Glossary]] for definitions of terms used throughout this memo. A primary distinction between employees and contractors is the degree of control over their work activities. Communicate clearly with contractors so they understand their freedom to choose when and how they complete their tasks. When engaging with contractors, make sure they're aware of their status, agree with their contractual arrangements, and understand their own responsibilities for taxes and local regulations.
 
 ## Words and phrases to avoid vs. use
 

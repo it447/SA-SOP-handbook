@@ -16,7 +16,7 @@ Recruiters and Account Managers (AMs).
 
 ## Steps
 
-**1. Disco Call (Recruiter + Candidate interview call):**
+**1. [[glossary-recruitment-delivery|Disco Call]] (Recruiter + Candidate interview call):**
 - Introduce yourself and explain Scale Army.
 - Ask the candidate to introduce themselves.
 - Send the client's website for role/company familiarity.

@@ -16,7 +16,7 @@ Finance Team, Operations Team, and Vendor Managers. Process owner: Finance & Ope
 
 ## Systems used
 
-Slack (expense request communication), Email (payment requests/invoices), Ramp (expense management and payments), Ramp Virtual Cards (operational tools/vendor payments), ACH wire transfers (vendor invoices), Google Drive (documentation storage).
+Slack (expense request communication), Email (payment requests/invoices), [[glossary-finance-operations|Ramp]] (expense management and payments), Ramp Virtual Cards (operational tools/vendor payments), ACH wire transfers (vendor invoices), Google Drive (documentation storage).
 
 ## Process overview
 

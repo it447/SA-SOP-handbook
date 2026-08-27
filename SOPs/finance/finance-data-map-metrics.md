@@ -16,7 +16,7 @@ Finance Team, Leadership, and Data Analysts.
 
 ## Purpose
 
-For each metric, this map identifies the responsible department, the definition, the source system/report, and the exact data location. It feeds the company data map and, ultimately, the **SA Business Health Report** — the consolidated leadership view of company performance, built from the Weekly and Monthly Finance Dashboards.
+For each metric, this map identifies the responsible department, the definition, the source system/report, and the exact data location. It feeds the company data map and, ultimately, the **SA Business Health Report** — the consolidated leadership view of company performance, built from the [[weekly-and-monthly-dashboard-prep-sop|Weekly and Monthly Finance Dashboards]].
 
 ## Finance-level metrics (Weekly & Monthly Dashboards)
 
