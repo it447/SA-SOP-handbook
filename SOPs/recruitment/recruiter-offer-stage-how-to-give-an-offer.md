@@ -16,4 +16,4 @@ Scale Army recruiters.
 
 ## Note
 
-The detailed offer-call script and procedure live in a separate linked doc that wasn't accessible during this pull (may have been moved, renamed, or permissions changed) — flag to Laura to get the current version added here. In the meantime, the general offer-call steps are covered in `sla-recruitment-process.md` and `recruitment-process-step-by-step.md` (Steps 12–16) in the Recruitment folder.
+The detailed offer-call script and procedure live in a separate linked doc that wasn't accessible during this pull (may have been moved, renamed, or permissions changed) — flag to Laura to get the current version added here. In the meantime, the general offer-call steps are covered in the [[sla-recruitment-process|Recruitment SLA]] and [[recruitment-process-step-by-step|Recruitment Process Step by Step]] (Steps 12–16) in the Recruitment folder.

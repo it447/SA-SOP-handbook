@@ -8,7 +8,7 @@ last_updated: 2026-07-20
 
 ## Goal
 
-Verify all salary-related information — base pay, commissions, bonuses, reimbursements, deductions — before payroll is finalized, cross-checking HR-prepared data against Slack communications and the All Sales Database.
+Verify all salary-related information — base pay, commissions, bonuses, reimbursements, deductions — before payroll is finalized, cross-checking HR-prepared data against Slack communications and the [[glossary-finance-operations|All Sales Database]].
 
 ## Who this is for
 
@@ -20,7 +20,7 @@ Slack (`#payroll-prep`, `#hr-billing-requests`, `#offboarding-lost-deals`), HR P
 
 ## Step-by-step process
 
-**1. Receive payroll prep from HR** — sheets covering base salary, adjustments, bonuses, commissions, reimbursements, deductions, and other compensation info, for both external talent and internal contractors.
+**1. [[payroll-sop|Receive payroll prep from HR]]** — sheets covering base salary, adjustments, bonuses, commissions, reimbursements, deductions, and other compensation info, for both external talent and internal contractors.
 
 **2. Review compensation adjustments** — check bonuses, commissions, reimbursements, salary adjustments, and deductions, confirming each is backed by internal records or communication.
 

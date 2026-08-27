@@ -8,7 +8,7 @@ last_updated: 2026-07-20
 
 ## Goal
 
-Define the process for generating client invoices, tracking payments, and ensuring timely, accurate billing aligned to each client's MSA.
+Define the process for generating client invoices, tracking payments, and ensuring timely, accurate billing aligned to each client's [[glossary-finance-operations|MSA]].
 
 ## Who this is for
 

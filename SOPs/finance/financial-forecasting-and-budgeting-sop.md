@@ -8,7 +8,7 @@ last_updated: 2026-07-20
 
 ## Goal
 
-A standardized framework for financial forecasting and budgeting — critical given the company's flat-monthly-fee business model rather than hourly billing. Covers annual/quarterly budgeting (setting targets) and forecasting (predicting performance from current data/trends).
+A standardized framework for financial forecasting and budgeting — critical given the company's flat-monthly-fee business model rather than hourly billing. Covers annual/quarterly [[glossary-finance-operations|budgeting]] (setting targets) and forecasting (predicting performance from current data/trends).
 
 ## Who this is for
 
@@ -46,7 +46,7 @@ Pull all operating expenses from the most recently closed month, categorized by 
 Send each department head their personnel/operating expense breakdown for review. Collect input on planned software changes, advertising spend shifts, headcount changes, one-time project expenses, and other material changes. Document and incorporate all requested changes, flagging significant variances for management review.
 
 ### Phase 5 — Revenue goal setting (Week 3–4, Finance + Upper Management)
-Present the baseline scenario (current contractors, margins, gap to target). Get required input from leadership: target revenue growth %, target new placements, target margin, and strategic priorities. Model conservative/moderate/aggressive scenarios against delivery capacity, then finalize the target scenario and document assumptions.
+Present the baseline scenario (current contractors, margins, gap to target), informed by the metrics tracked in the [[weekly-and-monthly-dashboard-prep-sop|SA Business Health Report]]. Get required input from leadership: target revenue growth %, target new placements, target margin, and strategic priorities. Model conservative/moderate/aggressive scenarios against delivery capacity, then finalize the target scenario and document assumptions.
 
 ### Phase 6 — Final review & approval (Week 4–6, Finance + Upper Management)
 Compile the full budget package (revenue, COGS, personnel with adjustments/commissions, opex by department, key KPIs). Present in a formal review, incorporate final requested changes, then obtain formal approval, lock the budget version, distribute to department heads, and set up monthly variance reporting.

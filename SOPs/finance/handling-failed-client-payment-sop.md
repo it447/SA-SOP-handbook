@@ -24,7 +24,7 @@ Stripe processes recurring payments based on the talent's start date; ACH paymen
 
 ## Step-by-step process
 
-**1. Identify the failed payment** — Finance monitors Stripe. If payment fails or isn't completed by the billing date, the process starts immediately.
+**1. Identify the failed payment** — [[client-billing-and-invoicing-sop|Finance monitors Stripe]]. If payment fails or isn't completed by the billing date, the process starts immediately.
 
 **2. Day 0 — Immediate client notification:** Finance emails the client (cc: client finance contact if available, the Client Success Manager, and HR), explaining the payment failed, providing a payment link, and noting that the talent will need to pause work if payment isn't received within 3 business days.
 

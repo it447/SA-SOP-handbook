@@ -71,7 +71,7 @@ Use when there's no confirmed hiring signal in the lead data.
 
 **Semi-interested / curious:** give the one-line explanation, then ask what role would be most useful for their team — don't turn the answer into a long pitch.
 
-**Fully interested:** before booking, confirm the role, experience level, timing/search stage, openness to full-time remote offshore talent, and whether the prospect is the decision-maker. Transition: "the next step is a short call with one of our account executives to go deeper on the role and the process."
+**Fully interested:** before booking, confirm the role, experience level, timing/search stage, openness to full-time remote offshore talent, and whether the prospect is the decision-maker. Transition: "the next step is a short call with one of our account executives to go deeper on the role and the process" — see the [[sales-training-ae-onboarding-sop|AE Onboarding SOP]] for how that call is run.
 
 ## Common objections
 

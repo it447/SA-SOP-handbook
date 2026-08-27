@@ -16,4 +16,4 @@ Recruitment team.
 
 ## Note
 
-Batch Zero is tracked in a live spreadsheet rather than a static procedure doc. Timing: within 1–2 business days of search launch (see `sla-recruitment-process.md` and `recruitment-process-step-by-step.md` for how Batch Zero fits into the full timeline).
+Batch Zero is tracked in a live spreadsheet rather than a static procedure doc. See also the [[batch-0-sop|Batch 0 SOP]] for the Ashby-side submission workflow. Timing: within 1–2 business days of search launch (see the [[sla-recruitment-process|Recruitment SLA]] and [[recruitment-process-step-by-step|Recruitment Process Step by Step]] for how Batch Zero fits into the full timeline).

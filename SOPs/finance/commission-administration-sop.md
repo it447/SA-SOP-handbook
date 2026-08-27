@@ -38,7 +38,7 @@ Some roles span multiple categories (e.g. POD Leaders earn both personal-deal co
 - **Eligible Revenue:** revenue/activity qualifying for commission per the applicable plan.
 - **Commission Plan:** the role-specific document defining rates, tiers, formulas, and payout mechanics.
 - **Clawback:** requires returning previously paid commission if conditions are met (e.g. EL revoked within 30 days, candidate not retained past the required period).
-- **Gross Margin (GM):** Sales Price minus Candidate Salary — the core metric for most placement/leadership commission structures.
+- **Gross Margin ([[glossary-finance-operations|GM]]):** Sales Price minus Candidate Salary — the core metric for most placement/leadership commission structures.
 - **All Sales Database (Master Placements File):** the central Google Sheet recording all placement activity company-wide, maintained by a designated Finance team member from automated Operations Slack data. This is the single source of truth for placement counts, GM, revenue, and retention data.
 - **Commission Calculator:** a role-specific sheet with the formulas/logic for that role's variable comp.
 - **Commission Tracker:** a role-specific sheet reconciling actual commission earned per period, auto-populated via IMPORTRANGE from the All Sales Database with a month/year filter.
@@ -63,7 +63,7 @@ The **All Sales Database** is the single source of truth for all placement data,
 3. Role-specific Trackers auto-populate via IMPORTRANGE (with a month/year filter); Finance confirms non-placement KPI attainment with the relevant department.
 4. Finance reviews trackers for the month and verifies commission totals.
 5. Finance copies the Payroll Prep File and updates it with each employee's commission amounts (last week of the month).
-6. HR loads that data into the official Payroll Prep File and processes it through Deel as part of Payment Cycle 2.
+6. [[payroll-sop|HR loads that data into the official Payroll Prep File]] and processes it through Deel as part of Payment Cycle 2.
 7. Employees can view their commissions in their role's tracker (read access) and in Deel once processed.
 
 **Data integrity:** all commission inputs must be verified against the All Sales Database before finalizing. Any discrepancy between the automated Slack data, the All Sales Database, and the trackers must be resolved before transferring to the Payroll Prep File.
@@ -111,7 +111,7 @@ All disputes and outcomes are documented.
 
 ## Reference documents
 
-The detailed, role-specific mechanics live in: the Commission & Compensation Guidelines master file, the All Sales Database, role-specific Commission Calculators and Trackers (one per role), the Payroll Prep File, the Commission Adjustment/Dispute Tracker, and the separate SOP for the Referral Bonus Program (see `referral-bonus-sop.md` in this folder).
+The detailed, role-specific mechanics live in: the Commission & Compensation Guidelines master file, the All Sales Database, role-specific Commission Calculators and Trackers (one per role), the Payroll Prep File, the Commission Adjustment/Dispute Tracker, and the separate [[referral-bonus-sop|Referral Bonus Program SOP]].
 
 ## Amendment history
 

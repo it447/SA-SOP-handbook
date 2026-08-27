@@ -30,7 +30,7 @@ Recruiters, Account Managers (AMs), Marketing Team, and Operations Team.
 1. **Log in and navigate** to the Recruiter tab → "View All Jobs" to see current slots.
 2. **Pick the job to refresh**, close it, then click "Repost."
 3. **Check the JD is still relevant** — update it if not, pulling the latest version or cleaning up the existing one; update the title if the role has changed.
-4. **Tweak job details:** if the exact title isn't available, pick the closest match and adjust the corresponding Ashby job post title to match. Update Location as needed. Skills: up to 10, pick the most relevant.
+4. **Tweak job details:** if the exact title isn't available, pick the closest match and adjust the corresponding [[glossary-outbound|Ashby]] job post title to match. Update Location as needed. Skills: up to 10, pick the most relevant.
 5. **Add the tracking link** — same UTM process as above (Admin → Custom Tracking Links → "LinkedIn Recruiter" link → paste into Application field).
 6. **Test the link** in a new tab before finishing.
 7. **Finish up** — double-check everything, untick anything unnecessary, and click Finish.

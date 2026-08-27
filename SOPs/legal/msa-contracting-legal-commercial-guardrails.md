@@ -125,6 +125,8 @@ Different Scale Army agreements use different caps, so the applicable template m
 
 **Also asked as:** What is our liability cap for AI work? / How much exposure do we take on an AI pilot? / What damages do we exclude?
 
+See also the [[legal-knowledge-base-scale-army-sapo|Legal Knowledge Base]] "Liability cap and the damages exclusion (illusory-cap principle)" section for the staffing-side damages-exclusion analysis.
+
 The restored-protections AI services template uses:
 
 - an aggregate liability cap equal to **fees actually paid under the agreement**.
@@ -553,6 +555,8 @@ Client-specific negotiations may modify the protection, but it should not be rem
 ## Buyout of Scale Army Talent
 
 **Also asked as:** Can the client hire a Scale Army resource directly? / What is the buyout fee? / When is a buyout permitted?
+
+See also the buy-out formula noted in the [[commercial-legal-engagement-knowledge-base|Commercial Legal & Engagement Knowledge Base]] and the Exhibit B pricing tiers in the [[legal-knowledge-base-scale-army-sapo|Legal Knowledge Base]].
 
 The Scale Army buyout policy established in prior work is:
 

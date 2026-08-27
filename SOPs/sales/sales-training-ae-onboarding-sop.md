@@ -16,6 +16,8 @@ Sales Team, Sales Managers, new hires/onboarding, and Leadership.
 
 ## 1. Macro concepts to understand
 
+See the [[glossary-sales|Sales Glossary]] for the fuller reference on these terms.
+
 - **Deck:** The presentation shown on sales calls and sent to prospective clients.
 - **Generic Sheet:** An example candidate sheet with top candidates, shared with clients to set expectations on the process.
 - **Engagement Letter (EL):** Sent to the client to initiate a hiring process.
@@ -89,7 +91,7 @@ Required when the role is technical, the decision-maker wasn't on the call, or t
 - Double-check the JD format before sending, and give the client comment-only access.
 - Create the proposal (ask Dijah or Elena about the Qwilr walkthrough if needed).
 - Send the paperwork with the Next Steps email template in HubSpot.
-- Once the deposit is signed, confirm the client accepted the Slack Connect invite (resend if needed).
+- Once the deposit is signed, confirm the client accepted the Slack Connect invite (resend if needed) — see the [[post-call-deposit-follow-up-sop|Post-Call Deposit Follow-Up SOP]] for the full follow-up cadence leading up to this point.
 - Log the meeting in your personal tracker.
 
 **If moving to "Temp Hold":**
@@ -99,7 +101,7 @@ Required when the role is technical, the decision-maker wasn't on the call, or t
 - Every Temp Hold deal must have follow-up activity scheduled in HubSpot.
 
 ### Launching a search
-1. Launch the search for candidates per the standard walkthrough.
+1. Launch the search for candidates per the standard walkthrough (see the [[recruitment-process-step-by-step|Recruitment Process Step by Step]] for how the search proceeds on the recruiting side).
 2. Introduce the client to their assigned AM using the provided template.
 
 ### When a lead doesn't show up

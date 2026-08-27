@@ -8,7 +8,7 @@ last_updated: 2026-07-20
 
 ## Goal
 
-Clear, standardized procedures for managing IT operations, ensuring smooth technology support and maintaining security protocols across the company.
+See the [[glossary-it-hubspot|IT/HubSpot Glossary]] for terminology used below. Clear, standardized procedures for managing IT operations, ensuring smooth technology support and maintaining security protocols across the company.
 
 ## Who this is for
 

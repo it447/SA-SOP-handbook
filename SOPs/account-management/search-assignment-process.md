@@ -23,7 +23,7 @@ Account Managers (AMs)
 - Example Company: Trim RX
 - NTC - ALL IN: 3k – 6.7K
 
-The alert message asks the Pod's Account Manager and Recruiter to confirm ownership, e.g.: "@Zeina, @Fer / @Liz, can you please confirm: Who is the Account Manager for this pod? (Insert name) scoped this and is in frequent touch with the client. Who is the Recruiter?"
+The alert message asks the Pod's Account Manager and Recruiter to [[recruitment-process-step-by-step|confirm ownership]], e.g.: "@Zeina, @Fer / @Liz, can you please confirm: Who is the Account Manager for this pod? (Insert name) scoped this and is in frequent touch with the client. Who is the Recruiter?"
 
 ## Related
 

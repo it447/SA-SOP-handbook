@@ -32,7 +32,7 @@ jurisdictions that comply with legal, ethical, and operational standards.
 
 ## 2. Industries Requiring Approval
 
-No recruiting or client engagement may proceed in the following restricted or
+See also the [[commercial-legal-engagement-knowledge-base|Legal: Commercial Engagement Knowledge Base]] for related engagement guardrails. No recruiting or client engagement may proceed in the following restricted or
 high-risk industries without written approval from Alex Kruger or Yosele Angulo:
 
 - Gambling

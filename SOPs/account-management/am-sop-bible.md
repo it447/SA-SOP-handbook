@@ -8,7 +8,7 @@ last_updated: 2026-07-20
 
 ## Overview
 
-This is the Account Manager's full operating guide, covering the entire client journey from the Kick-Off Call through closing the deal. Follow the steps in order.
+This is the Account Manager's full operating guide, covering the entire client journey from the [[glossary-account-managers|Kick-Off Call]] through closing the deal. Follow the steps in order.
 
 **Steps Overview:**
 - Step One: Getting Introduced + Kick-Off Call
@@ -130,7 +130,7 @@ Your job here is to keep things smooth, professional, and on track — gathering
 
 ### Prepping for the Interview Block
 
-Once the recruiter flags candidates as ready (post-Disco Call):
+Once the recruiter flags candidates as ready (post-[[candidate-screening-sop|Disco Call]]):
 
 - Send prep materials to the recruiter: a written prep doc and a short Loom video (see examples in original doc).
 - Book the Interview Block if not already set during the CRS: propose 2–3 times, include the recruiter, remove the meeting location so the recruiter can add candidate links. If the client proposes an individual time, check availability but book it on your own calendar.

@@ -41,7 +41,7 @@ Every full MQL is a meeting booked that's passed extra quality checks; "Contact 
 
 ### 4. Meeting Held
 
-The contact actually speaks with an Account Executive (AE) — the scheduled meeting takes place. This is the point the contact transitions from a marketing-managed record to an active sales contact. Once it happens, the AE tags the contact with two qualification fields (SAL and SQL) to determine whether it was a good opportunity.
+See the [[glossary-sales|Sales Glossary]] for related sales-side terminology (Deck, EL, MSA, Deposit). The contact actually speaks with an Account Executive (AE) — the scheduled meeting takes place. This is the point the contact transitions from a marketing-managed record to an active sales contact. Once it happens, the AE tags the contact with two qualification fields (SAL and SQL) to determine whether it was a good opportunity.
 
 ## Part 2: Marketing channel overview
 

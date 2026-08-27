@@ -8,7 +8,7 @@ last_updated: 2026-07-20
 
 ## Goal
 
-The step-by-step workflow for posting a role on Ashby once a new search has been initiated and approved.
+The step-by-step workflow for posting a role on [[glossary-outbound|Ashby]] once a new search has been initiated and approved.
 
 ## Who this is for
 
@@ -97,7 +97,7 @@ Standard automation rules apply by default to all roles and may get deactivated 
 
 ## Final review & publishing
 
-Re-check compensation, review all tabs for consistency, change status from Draft to Open, and click Publish.
+Re-check compensation, review all tabs for consistency, change status from Draft to Open, and click Publish. When the role is later won or lost, follow the [[closing-roles-on-ashby-sop|Closing Roles on Ashby SOP]] to close it out correctly.
 
 ## Slack notification
 

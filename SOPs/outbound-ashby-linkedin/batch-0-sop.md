@@ -16,11 +16,11 @@ Recruiters, Account Managers (AMs), and Leadership.
 
 ## What Batch 0 is
 
-A maximum of 5 candidate profiles submitted to the client within 24–48 hours of a search launching. It's a "calibration batch," not a final shortlist — a way to open discussion using real candidate profiles and confirm the sourcing approach is on track.
+See also the recruitment team's [[batch-zero-process|Batch Zero Process]] for how this fits into the overall recruitment SLA. A maximum of 5 candidate profiles submitted to the client within 24–48 hours of a search launching. It's a "calibration batch," not a final shortlist — a way to open discussion using real candidate profiles and confirm the sourcing approach is on track.
 
 ## Timeline
 
-The assigned recruiter starts building Batch 0 in Ashby as soon as the search launches and is announced in the designated Slack channel. Batch 0 must be submitted within 24 hours.
+The assigned recruiter starts building Batch 0 in [[glossary-outbound|Ashby]] as soon as the search launches and is announced in the designated Slack channel. Batch 0 must be submitted within 24 hours.
 
 ## Guidelines
 
