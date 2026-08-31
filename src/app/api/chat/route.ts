@@ -31,19 +31,25 @@ export async function POST(req: Request): Promise<Response> {
 
   const { messages } = (await req.json()) as { messages: CoreMessage[] };
 
-  // Build the retrieval query from the last couple of user turns, not just
-  // the latest one in isolation — a vague follow-up like "what about for
-  // contractors?" needs the prior turn's topic to retrieve the right chunks.
+  // Retrieve against BOTH the latest user message alone AND the last couple
+  // of turns combined. The combined form helps a vague follow-up ("what
+  // about for contractors?") that only makes sense with the prior turn's
+  // topic; the latest-message-alone form stops a topic pivot from getting
+  // dragged toward whatever the previous, unrelated question was about
+  // (e.g. asking about the Team Directory right after asking about referral
+  // bonuses shouldn't keep retrieving referral-bonus chunks). See
+  // lib/assistant.ts's retrieveContext for how these get merged.
   const recentUserMessages = messages
     .filter((m) => m.role === "user" && typeof m.content === "string")
     .slice(-2) as { content: string }[];
-  const query = recentUserMessages.map((m) => m.content).join("\n");
+  const latestMessage = recentUserMessages.at(-1)?.content ?? "";
+  const combinedRecentTurns = recentUserMessages.map((m) => m.content).join("\n");
 
   let sources: AssistantSource[] = [];
   let contextBlock = "(no context retrieved)";
 
   try {
-    ({ contextBlock, sources } = await retrieveContext(query));
+    ({ contextBlock, sources } = await retrieveContext([latestMessage, combinedRecentTurns]));
   } catch (err) {
     if (err instanceof VoyageConfigError) {
       return Response.json(
