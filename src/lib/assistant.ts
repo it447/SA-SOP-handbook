@@ -42,13 +42,45 @@ Context:
 ${contextBlock}`;
 }
 
-/** Retrieves relevant SOP chunks for a query and formats them as a context block + source list. */
+/**
+ * Retrieves relevant SOP chunks for one or more candidate queries and formats
+ * them as a context block + source list.
+ *
+ * Accepting multiple queries (rather than one combined string) matters for
+ * multi-turn chat: retrieving only against "last 2 user turns joined into one
+ * string" works for a vague follow-up ("what about for contractors?") but
+ * actively hurts when the user pivots to a brand-new, unrelated topic —
+ * the embedding gets dragged toward the previous question's subject and the
+ * new question's actual answer (e.g. a name in the Team Directory) loses out
+ * to chunks from whatever the prior turn was about. So callers pass both the
+ * latest message alone AND the combined recent-turns string; results from
+ * every query are merged (first query's matches ranked first) and deduped by
+ * chunk identity, giving the model a shot at both interpretations instead of
+ * guessing which one the retrieval step should have committed to.
+ */
 export async function retrieveContext(
-  query: string
+  query: string | string[]
 ): Promise<{ contextBlock: string; sources: AssistantSource[] }> {
-  const chunks = await retrieveRelevantChunks(query, 6);
+  const queries = [...new Set((Array.isArray(query) ? query : [query]).map((q) => q.trim()).filter(Boolean))];
+  const perQueryResults = await Promise.all(queries.map((q) => retrieveRelevantChunks(q, 6)));
+
+  const seen = new Set<string>();
+  const chunks: Awaited<ReturnType<typeof retrieveRelevantChunks>>[number][] = [];
+  for (const results of perQueryResults) {
+    for (const c of results) {
+      const key = `${c.file_path}#${c.chunk_index}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      chunks.push(c);
+    }
+  }
+  // Cap the total so context doesn't balloon just because we ran more than
+  // one query — 8 chunks across both queries, same order of magnitude as the
+  // original single-query top 6.
+  const topChunks = chunks.slice(0, 8);
+
   const index = getContentIndex();
-  const sources: AssistantSource[] = chunks.map((c) => {
+  const sources: AssistantSource[] = topChunks.map((c) => {
     const page = index.find((p) => p.relPath === c.file_path);
     const hidden = page?.frontmatter.hidden === true;
     return {
@@ -57,8 +89,8 @@ export async function retrieveContext(
     };
   });
   const contextBlock =
-    chunks.length > 0
-      ? chunks
+    topChunks.length > 0
+      ? topChunks
           .map((c, i) => `[Source ${i + 1}: ${c.heading || c.file_path} (${c.page_url})]\n${c.chunk_text}`)
           .join("\n\n---\n\n")
       : "(no context retrieved)";
