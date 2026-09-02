@@ -154,19 +154,58 @@ export async function searchSimilarChunks(
  * search on the heading + chunk text catches those exact-term matches
  * deterministically, regardless of how the embeddings rank them.
  */
+/**
+ * Builds an OR-combined tsquery string ("word1 | word2 | word3") from a raw
+ * query's significant words. Deliberately NOT plainto_tsquery/websearch_to_tsquery
+ * -- both of those AND every word together, requiring a single chunk to
+ * contain ALL of them to match at all. A natural question like "What's the
+ * escalation order if I need a password from Keeper?" has its distinctive
+ * terms ("escalation", "password", "keeper") split across different chunks
+ * of the same SOP (a table titled "Escalation order" vs. a paragraph that
+ * says "password"), so an AND match finds nothing in either. OR + ts_rank
+ * instead lets a chunk match on any subset of terms, ranked by how many/how
+ * well it matches -- much closer to what "keyword search" should mean here.
+ */
+function buildOrTsQuery(query: string): string | null {
+  const STOPWORDS = new Set([
+    "the", "a", "an", "is", "are", "was", "were", "be", "been", "being",
+    "and", "or", "but", "if", "then", "so", "of", "to", "in", "on", "at",
+    "for", "with", "from", "by", "about", "as", "it", "its", "this", "that",
+    "what", "whats", "who", "when", "where", "how", "why", "do", "does",
+    "did", "can", "could", "should", "would", "i", "my", "me", "you", "your",
+  ]);
+
+  const words = query
+    .toLowerCase()
+    .replace(/'/g, "")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 2 && !STOPWORDS.has(w));
+
+  const unique = [...new Set(words)];
+  if (unique.length === 0) return null;
+
+  // Escape single quotes defensively even though the words above are
+  // already alphanumeric-only; each word becomes its own to_tsquery lexeme.
+  return unique.map((w) => w.replace(/'/g, "''")).join(" | ");
+}
+
 export async function searchKeywordChunks(query: string, topK = 6): Promise<RetrievedChunk[]> {
   await ensureSchema();
+
+  const tsQueryString = buildOrTsQuery(query);
+  if (!tsQueryString) return [];
 
   const { rows } = await sql`
     SELECT
       id, file_path, heading, page_url, chunk_index, chunk_text, content_hash,
       ts_rank(
         to_tsvector('english', coalesce(heading, '') || ' ' || chunk_text),
-        plainto_tsquery('english', ${query})
+        to_tsquery('english', ${tsQueryString})
       ) AS similarity
     FROM kb_chunks
     WHERE to_tsvector('english', coalesce(heading, '') || ' ' || chunk_text)
-          @@ plainto_tsquery('english', ${query})
+          @@ to_tsquery('english', ${tsQueryString})
     ORDER BY similarity DESC
     LIMIT ${topK};
   `;
