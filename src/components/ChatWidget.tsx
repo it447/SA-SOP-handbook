@@ -2,13 +2,12 @@
 
 import { useChat, type Message } from "ai/react";
 import { useEffect, useState } from "react";
+import { CHAT_HISTORY_KEY } from "@/lib/chatStorage";
 
 interface Source {
   title: string;
   url: string | null;
 }
-
-const CHAT_HISTORY_KEY = "sa-kb-chat-history";
 
 function loadStoredMessages(): Message[] {
   if (typeof window === "undefined") return [];

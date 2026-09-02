@@ -75,9 +75,11 @@ export async function retrieveContext(
     }
   }
   // Cap the total so context doesn't balloon just because we ran more than
-  // one query — 8 chunks across both queries, same order of magnitude as the
-  // original single-query top 6.
-  const topChunks = chunks.slice(0, 8);
+  // one query — 10 chunks across both queries. Slightly higher than the
+  // original single-query top 6 to leave room for retrieveRelevantChunks's
+  // own keyword-match safety net (see lib/retrieve.ts) to actually survive
+  // this cap instead of getting crowded out by vector-only matches.
+  const topChunks = chunks.slice(0, 10);
 
   const index = getContentIndex();
   const sources: AssistantSource[] = topChunks.map((c) => {

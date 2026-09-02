@@ -142,3 +142,34 @@ export async function searchSimilarChunks(
 
   return rows as unknown as RetrievedChunk[];
 }
+
+/**
+ * Keyword/lexical search against kb_chunks, as a safety net alongside vector
+ * similarity search. Pure vector search can lose an exact match on a
+ * specific product/tool name (e.g. "Keeper") to a large, broad-vocabulary
+ * document that merely uses similar general language (e.g. long internal
+ * reference docs that happen to cover "escalation," "access," "approval" as
+ * generic topics) -- the small, precise chunk that actually names the term
+ * doesn't necessarily win on embedding similarity alone. Postgres full-text
+ * search on the heading + chunk text catches those exact-term matches
+ * deterministically, regardless of how the embeddings rank them.
+ */
+export async function searchKeywordChunks(query: string, topK = 6): Promise<RetrievedChunk[]> {
+  await ensureSchema();
+
+  const { rows } = await sql`
+    SELECT
+      id, file_path, heading, page_url, chunk_index, chunk_text, content_hash,
+      ts_rank(
+        to_tsvector('english', coalesce(heading, '') || ' ' || chunk_text),
+        plainto_tsquery('english', ${query})
+      ) AS similarity
+    FROM kb_chunks
+    WHERE to_tsvector('english', coalesce(heading, '') || ' ' || chunk_text)
+          @@ plainto_tsquery('english', ${query})
+    ORDER BY similarity DESC
+    LIMIT ${topK};
+  `;
+
+  return rows as unknown as RetrievedChunk[];
+}
