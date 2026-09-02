@@ -21,6 +21,10 @@ export default function AdminPage() {
   const [users, setUsers] = useState<UserSummary[]>([]);
   const [removingId, setRemovingId] = useState<string | null>(null);
 
+  const [ingesting, setIngesting] = useState(false);
+  const [ingestResult, setIngestResult] = useState<string | null>(null);
+  const [ingestError, setIngestError] = useState<string | null>(null);
+
   async function loadUsers() {
     const res = await fetch("/api/admin/users").then((r) => r.json());
     if (res.ok) setUsers(res.users);
@@ -71,6 +75,24 @@ export default function AdminPage() {
     }
   }
 
+  async function ingest() {
+    setIngesting(true);
+    setIngestResult(null);
+    setIngestError(null);
+    try {
+      const res = await fetch("/api/admin/ingest");
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Ingest failed.");
+      setIngestResult(
+        `Done — re-embedded ${data.notesFound} SOP notes (${data.totalChunks} chunks) into the chatbot's knowledge base.`
+      );
+    } catch (e) {
+      setIngestError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setIngesting(false);
+    }
+  }
+
   async function revoke(id: string) {
     setRemovingId(id);
     try {
@@ -117,6 +139,23 @@ export default function AdminPage() {
     <div className="min-h-screen bg-navy p-8">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-serif font-bold mb-6 text-cream">Admin — Manage access</h1>
+
+        <div className="bg-navy-soft border border-navy-soft rounded-lg p-6 mb-6">
+          <h2 className="font-serif font-semibold text-cream mb-3">Chatbot knowledge base</h2>
+          <p className="text-xs text-cream-dim mb-3">
+            The chatbot (web + Slack) only knows about SOPs as of the last time this ran. Every time an SOP is
+            added or edited in GitHub, click this to re-embed the vault so the chatbot's answers reflect it.
+          </p>
+          <button
+            onClick={ingest}
+            disabled={ingesting}
+            className="rounded bg-orange text-cream px-4 py-2 text-sm font-medium hover:bg-orange-dark disabled:opacity-50"
+          >
+            {ingesting ? "Refreshing…" : "Refresh knowledge base"}
+          </button>
+          {ingestResult && <p className="text-xs text-ok mt-3">{ingestResult}</p>}
+          {ingestError && <p className="text-xs text-danger mt-3">{ingestError}</p>}
+        </div>
 
         <div className="bg-navy-soft border border-navy-soft rounded-lg p-6 mb-6">
           <h2 className="font-serif font-semibold text-cream mb-3">Invite someone</h2>
