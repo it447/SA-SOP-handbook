@@ -22,6 +22,12 @@ export interface PageFrontmatter {
    * and the wiki route itself 404s) but still embedded for the chatbot to
    * use as knowledge — see docs/ for the access-control caveat on this. */
   hidden?: boolean;
+  /** Optional explicit sort position within a department's sidebar list
+   * (lower sorts first). Pages without an `order` sort after every page
+   * that has one, alphabetically among themselves — same as the default
+   * behavior before this field existed. Doesn't affect the glossary, which
+   * is always pinned first regardless of `order`. */
+  order?: number;
 }
 
 export interface PageHeading {
@@ -123,6 +129,7 @@ export function getContentIndex(): PageEntry[] {
       owner: toStringOrUndefined(fm.owner),
       last_updated: toStringOrUndefined(fm.last_updated),
       hidden: fm.hidden === true,
+      order: typeof fm.order === "number" ? fm.order : undefined,
     };
 
     return {
@@ -307,11 +314,18 @@ export function getDepartmentGroups(): DepartmentGroup[] {
       department,
       // Glossary pages pin to the top of each department's list (usually the
       // first thing someone wants when opening a department they're less
-      // familiar with); everything else sorts alphabetically after that.
+      // familiar with). After that, pages with an explicit `order` sort by
+      // that (lower first); pages without one sort alphabetically after
+      // every explicitly-ordered page.
       pages: pages.sort((a, b) => {
         const aGlossary = a.frontmatter.category?.toLowerCase() === "glossary";
         const bGlossary = b.frontmatter.category?.toLowerCase() === "glossary";
         if (aGlossary !== bGlossary) return aGlossary ? -1 : 1;
+
+        const aOrder = a.frontmatter.order ?? Infinity;
+        const bOrder = b.frontmatter.order ?? Infinity;
+        if (aOrder !== bOrder) return aOrder - bOrder;
+
         return getDisplayTitle(a).localeCompare(getDisplayTitle(b));
       }),
     }))
