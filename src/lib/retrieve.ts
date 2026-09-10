@@ -16,7 +16,7 @@ import { searchSimilarChunks, searchKeywordChunks, type RetrievedChunk } from ".
  */
 export async function retrieveRelevantChunks(
   query: string,
-  topK = 6
+  topK = 8
 ): Promise<RetrievedChunk[]> {
   const queryEmbedding = await embedText(query, "query");
   const [vectorResults, keywordResults] = await Promise.all([

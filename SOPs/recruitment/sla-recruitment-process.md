@@ -16,7 +16,7 @@ Recruiters, Account Managers (AMs), Sourcing and Marketing Team, Delivery Teams.
 
 ## Day-by-day process
 
-- **Day 0 — Search Launch:** Client signs and the search launches immediately. Job is created and posted on Ashby. Recruiting team initiates activities. The AE sends an email introducing the AM.
+- **Day 0 — Search Launch:** Client signs and the search launches immediately. The Recruiting Ops team creates and posts the job on Ashby (per Youssef Singer, Sourcing Coordinator — see [[recruiting-ops-sop|Recruiting Ops SOP]]). Recruiting team initiates activities. The AE sends an email introducing the AM.
 - **Day 1 — Outreach & Application Screening:** Recruiters start LinkedIn/email outreach and review incoming applications.
 - **Day 2 — Batch 0 Sent:** Batch 0 candidates go to the AM and client via email.
 - **Day 3 — Kickoff Call (KOC):** Finalize the JD, budget, and hiring priorities; set expectations (see the KOC SOP and script). **If the KOC doesn't happen by Day 3, or expectations change from the start, the clock resets** — the team gains 2 extra days to find candidates.

@@ -34,9 +34,11 @@ See the [[glossary-recruitment-delivery|Recruitment & Delivery Glossary]] for th
 
 ## How do we move a candidate from "Interviewing" to "Offer" in Ashby?
 
-Select the candidate and drag them to the **Offer** stage. This is a manual, silent action — **Ashby does not send any automatic email or notification** when a candidate moves into this stage.
+Select the candidate and drag them to the **Offer** stage.
 
-Because of that, the team has to manually:
+**Correction (per Youssef Singer, Sourcing Coordinator):** whether this triggers an automatic email depends on how that interview stage is configured — Ashby *can* send an automatic email on a stage move if one is set up under that stage's email/interview settings. Check the specific job's Interview Plan configuration for the Offer stage rather than assuming either way.
+
+If no automatic email is configured for that stage, the team has to manually:
 1. Email the candidate to let them know the client is interested in moving forward.
 2. Schedule a call to make the offer.
 

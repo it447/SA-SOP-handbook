@@ -14,6 +14,8 @@ The step-by-step workflow for posting a role on [[glossary-outbound|Ashby]] once
 
 Recruiters, Account Managers (AMs), and Operations Team.
 
+**Who actually posts the job (per Youssef Singer, Sourcing Coordinator):** the Recruiting Ops team is who executes this workflow and posts the job on Ashby — not the assigned recruiter individually. See also [[recruiting-ops-sop|Recruiting Ops SOP]] and [[sourcing-recruiting-workflow-sop|Sourcing & Recruiting Workflow SOP]] for the fuller picture of who does what across the Ashby job-creation process.
+
 ## General considerations
 
 By the time sourcing begins, Sales has already contacted the client, defined/validated the role, and approved the JD. The finalized JD and role details are posted in `#new-searches`.

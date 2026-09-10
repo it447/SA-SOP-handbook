@@ -128,6 +128,23 @@ sourcing in Asia is generally discouraged due to time zone misalignment with
 Scale Army's core client base. Teams must evaluate operational feasibility for
 any hiring that may impact delivery commitments.
 
+## 3.4 Practical Guidance (Field Notes)
+
+Per Youssef Singer (Sourcing Coordinator), some added color on how this policy
+plays out day to day — this doesn't change the formal lists above, but explains
+how strictly each part is actually enforced:
+
+- **Always off the table, no exceptions:** drugs, alcohol, and weapons — these
+  industries are never approved regardless of the specific role or client.
+- **Sometimes negotiable:** healthcare (D2C healthcare) is not a hard no —
+  check with your manager, since it's evaluated case by case depending on the
+  specific role the client is hiring for.
+- **The country list changes more than it looks like it does:** which
+  countries are workable depends heavily on Deel's own commercial
+  relationships in that country at any given time, which shift often. Treat
+  the lists above as a starting point, not a final answer — always confirm
+  current status with HR or your manager before ruling a country in or out.
+
 ## 4. Process for Seeking Approval
 
 - **Team Responsibility:** Identify any client or role falling under restricted

@@ -36,6 +36,8 @@ Write in plain text only — no markdown formatting (no **bold**, no _italics_, 
 
 If the answer isn't contained in the context, say "I don't know — that isn't covered in the SOP handbook I have access to." Do not make anything up or fill gaps with general knowledge about how other companies do things.
 
+If a question has several parts and the context answers most of them but is silent on just one sub-detail (e.g. it gives the full process but doesn't state a turnaround time, or gives the policy but not one specific edge case), answer the parts you can fully, then note the specific missing piece in a natural sentence — don't tack on the full "I don't know — that isn't covered..." boilerplate for a partial gap in an otherwise-answered question. Save that exact phrase for when the context has nothing relevant at all.
+
 When you answer, mention which SOP(s) the information came from by name (e.g. "per the Offboarding SOP...") so the user knows where to look for the full detail, but the source links shown alongside the answer already handle precise citation — you don't need to dump raw quotes to prove it.
 
 Context:
@@ -62,7 +64,7 @@ export async function retrieveContext(
   query: string | string[]
 ): Promise<{ contextBlock: string; sources: AssistantSource[] }> {
   const queries = [...new Set((Array.isArray(query) ? query : [query]).map((q) => q.trim()).filter(Boolean))];
-  const perQueryResults = await Promise.all(queries.map((q) => retrieveRelevantChunks(q, 6)));
+  const perQueryResults = await Promise.all(queries.map((q) => retrieveRelevantChunks(q, 8)));
 
   const seen = new Set<string>();
   const chunks: Awaited<ReturnType<typeof retrieveRelevantChunks>>[number][] = [];
@@ -75,11 +77,12 @@ export async function retrieveContext(
     }
   }
   // Cap the total so context doesn't balloon just because we ran more than
-  // one query — 10 chunks across both queries. Slightly higher than the
-  // original single-query top 6 to leave room for retrieveRelevantChunks's
-  // own keyword-match safety net (see lib/retrieve.ts) to actually survive
-  // this cap instead of getting crowded out by vector-only matches.
-  const topChunks = chunks.slice(0, 10);
+  // one query — 14 chunks across both queries. Bumped up from 10: a
+  // two-entity comparison question ("difference between X and Y") needs
+  // room for chunks from BOTH docs to survive, and a large document
+  // shouldn't be able to crowd out a smaller, equally relevant one just by
+  // having more chunks in the running.
+  const topChunks = chunks.slice(0, 14);
 
   const index = getContentIndex();
   const sources: AssistantSource[] = topChunks.map((c) => {

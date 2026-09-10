@@ -180,7 +180,13 @@ function buildOrTsQuery(query: string): string | null {
     .replace(/'/g, "")
     .replace(/[^a-z0-9\s]/g, " ")
     .split(/\s+/)
-    .filter((w) => w.length > 2 && !STOPWORDS.has(w));
+    // length > 1 (not > 2): this domain is full of load-bearing 2-letter
+    // acronyms -- AM, AE, CS, HR -- that a stricter length filter would
+    // silently strip. "Who's the AM Lead?" was losing its one truly
+    // distinctive term ("AM") this way, leaving only "lead" -- a word
+    // generic enough to match "Team Lead," "Recruiting Lead," etc.
+    // instead of the specific answer.
+    .filter((w) => w.length > 1 && !STOPWORDS.has(w));
 
   const unique = [...new Set(words)];
   if (unique.length === 0) return null;
