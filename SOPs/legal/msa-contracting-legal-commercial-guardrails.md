@@ -562,7 +562,7 @@ The Scale Army buyout policy established in prior work is:
 
 - Buyouts are permitted only after **12 months**.
 - For a resource with a monthly fee below **$3,000**, the buyout fee is **$7,000**.
-- For a resource with a monthly fee of **$3,000 or more**, the buyout fee is **19.5% of annualized compensation/fee basis**, according to the established commercial rule.
+- For a resource with a monthly fee of **$3,000 or more**, the buyout fee is **19.5% of the annualized amount**, calculated on a basis that depends on the deal's start date (per Youssef Singer, Sourcing Coordinator): **candidate compensation/salary** for deals starting **before July 2025**, and **client fee** for deals starting **on or after July 2025**.
 - Prepaid amounts are not credited against the buyout.
 
 Where a governing MSA or Exhibit B contains different legacy language, the actual executed agreement must be checked.

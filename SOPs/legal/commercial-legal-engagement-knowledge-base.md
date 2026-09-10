@@ -85,6 +85,8 @@ Applies to **Scale Army (PLTWG LLC)** talent sourcing. GM below means **gross ma
 
 *Also asked as:* "Can we source for a cannabis company?", "Is crypto marketing allowed?", "What industries are off-limits?", "Who approves a high-risk client?"
 
+**Note:** this table classifies alcohol as negotiable/needs-review, but per [[restricted-hiring-procedures-sop|the HR Restricted Hiring Procedures SOP]]'s field notes (Youssef Singer, Sourcing Coordinator), drugs, alcohol, and weapons are treated as always off the table in practice, with no exceptions — check with HR/your manager if a specific deal seems to conflict with that.
+
 ---
 
 ## Restricted countries for talent sourcing
@@ -209,7 +211,7 @@ Applies to **Scale Army (PLTWG LLC)**. GM = gross margin. These are the fixed nu
 - **Liability cap:** **one month's fee (locked)**.
 - **Credit reuse expiry:** **12 months (locked)**.
 - **Confidentiality/subpoena notice:** **10 days**.
-- **Buy-out formula (verbatim from source):** "**Fixed: $7k / <3k or 19.5% annual ≥3k.**" See "Open / unresolved" — the exact meaning of this shorthand is not spelled out in the source. See also the [[msa-contracting-legal-commercial-guardrails|MSA Contracting Legal & Commercial Guardrails]] "Buyout of Scale Army Talent" section for the reconstructed formula.
+- **Buy-out formula (verbatim from source):** "**Fixed: $7k / <3k or 19.5% annual ≥3k.**" The 19.5% basis is resolved by deal date (per Youssef Singer, Sourcing Coordinator): candidate compensation/salary for deals starting before July 2025, client fee for deals on/after July 2025. See also the [[msa-contracting-legal-commercial-guardrails|MSA Contracting Legal & Commercial Guardrails]] "Buyout of Scale Army Talent" section and the [[legal-knowledge-base-scale-army-sapo|Legal Knowledge Base]]'s Exhibit B section for the fuller formula.
 
 *Also asked as:* "What's our minimum margin?", "How much are non-solicit damages?", "What's the liability cap?", "What's the buy-out fee?", "What's the discount ceiling?"
 
@@ -256,7 +258,7 @@ Who signs off on what (Scale Army / PLTWG LLC operations).
 ## Open / unresolved
 
 - **Do the standard MSA arbitration terms already carve out solicitation, circumvention, and nonpayment?** Our governing principle is to arbitrate everything except claims **we** would bring (solicitation, circumvention, nonpayment), which we want to keep in court. The cheat sheet locks arbitration + Florida jurisdiction + Miami venue as non-negotiable but **does not confirm whether the carve-outs are already drafted into the clause.** Verify against the actual MSA text before relying on it.
-- **Exact meaning of the buy-out shorthand** — "Fixed: $7k / <3k or 19.5% annual ≥3k" — is **not spelled out** in the source. It appears to indicate a fixed fee for one salary band and a percentage-of-annual for another, but the thresholds and base are ambiguous. Confirm the precise formula before quoting.
+- ~~**Exact meaning of the buy-out shorthand**~~ — resolved: "Fixed: $7k / <3k or 19.5% annual ≥3k" means a flat $7,000 fee below $3,000/month gross, and 19.5% of the annual rate at/above $3,000/month gross. The 19.5% basis itself is resolved by deal date (candidate compensation/salary before July 2025, client fee on/after) per Youssef Singer, Sourcing Coordinator — see the numeric guardrails section above.
 - **SA Product Ops (Company 2) commercial terms:** this project contains **no** pricing, MSA, or restricted-role material for SA Product Ops LLC. All pricing/MSA/restricted-role content here is Scale Army's. Do not assume Company 2 uses the same figures; that material has not been established in this project.
 - **"Political" restricted sector scope:** listed as prohibited for high-risk sourcing without further definition (e.g., campaigns vs. advocacy vs. gov contractors). Not clarified in the source.
 

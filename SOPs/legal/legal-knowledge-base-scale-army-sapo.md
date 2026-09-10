@@ -145,7 +145,11 @@ A recurring structural device: **carve fee-collection actions out of arbitration
 - Gross candidate monthly rate **below $3,000** → **$7,000 flat** one-time buy-out fee.
 - Gross candidate monthly rate **$3,000 and above** → **19.5% of the annual rate**, one-time.
 
-**Known ambiguity to resolve per deal:** Exhibit B labels the 19.5% base "Gross Candidate Monthly Rate," but the arithmetic has sometimes been run on the **monthly client Fee** instead. Fee-basis vs. candidate-gross-basis is a material dollar difference (the tier test is unaffected; the resulting figure is not). Confirm which base the separate buy-out agreement uses before quoting. Note that the Exhibit B table is an **embedded image**, so it cannot be changed by find-and-replace and must be regenerated manually.
+**19.5% basis — resolved by deal date (per Youssef Singer, Sourcing Coordinator):** the 19.5% figure is calculated on different bases depending on when the engagement started:
+- **Before July 2025** → basis is the **candidate's compensation/salary**.
+- **On or after July 2025** → basis is the **client fee**.
+
+Confirm the engagement's start date before quoting, since fee-basis vs. candidate-gross-basis is a material dollar difference (the tier test itself is unaffected; the resulting figure is not). Note that the Exhibit B table is an **embedded image**, so it cannot be changed by find-and-replace and must be regenerated manually.
 
 ---
 
@@ -396,7 +400,7 @@ Do **not** state these as settled fact:
 - **Lisa review pending on:** Cure Solutions liability/exclusion structure; Genevieve Shaw §5 data covenant; SAA AI-automation disclaimer, liability cap exposure, and class-action waiver before publishing.
 - **Yosele approval pending on:** Cure Solutions own-fault carve-back exception; Genevieve Shaw Oregon governing-law deviation; Genevieve Shaw cash-refund credit-clause deviation; Hatcher late-interest rate confirmation.
 - **Ticket Fairy** — agency/firm responses pending; hourly/blended (Slates) vs. contingency decision, and whether to fund a prejudgment writ of attachment, sit with Yosele.
-- **Exhibit B 19.5% base** — fee-basis vs. candidate-gross-basis must be confirmed per deal before quoting.
+- ~~**Exhibit B 19.5% base** — fee-basis vs. candidate-gross-basis must be confirmed per deal before quoting.~~ Resolved: basis is candidate compensation/salary for deals starting before July 2025, and client fee for deals on/after July 2025 (per Youssef Singer, Sourcing Coordinator) — see the Buy-out window approval rule section above.
 - **Genevieve Shaw 3%/month late fee** — intentional? Enforceable under Oregon law? Not confirmed.
 
 *Where a specific statute section, case name, or exact date is needed for any of the above and is not stated here, it is genuinely not on record in this project — obtain it from the source document or counsel rather than assuming.*
