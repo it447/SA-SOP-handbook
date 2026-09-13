@@ -173,6 +173,11 @@ function buildOrTsQuery(query: string): string | null {
     "for", "with", "from", "by", "about", "as", "it", "its", "this", "that",
     "what", "whats", "who", "when", "where", "how", "why", "do", "does",
     "did", "can", "could", "should", "would", "i", "my", "me", "you", "your",
+    // Generic filler words that carry no topic signal but show up in almost
+    // every SOP (troubleshooting caveats, exceptions, questions) -- "not"
+    // and "any" alone were letting a single-word OR match ("not" or "any")
+    // pull in large unrelated documents that just happen to use them a lot.
+    "not", "any", "all", "no",
   ]);
 
   const words = query
@@ -201,7 +206,12 @@ export async function searchKeywordChunks(query: string, topK = 6): Promise<Retr
 
   const tsQueryString = buildOrTsQuery(query);
   if (!tsQueryString) return [];
+  const words = tsQueryString.split(" | ");
 
+  // Fetch more than topK from the OR match itself -- the OR is still needed
+  // (see buildOrTsQuery) so a chunk matching just one distinctive term of a
+  // multi-term query can be found at all -- then apply a stricter filter
+  // below before trimming back down to topK.
   const { rows } = await sql`
     SELECT
       id, file_path, heading, page_url, chunk_index, chunk_text, content_hash,
@@ -213,8 +223,29 @@ export async function searchKeywordChunks(query: string, topK = 6): Promise<Retr
     WHERE to_tsvector('english', coalesce(heading, '') || ' ' || chunk_text)
           @@ to_tsquery('english', ${tsQueryString})
     ORDER BY similarity DESC
-    LIMIT ${topK};
+    LIMIT ${topK * 3};
   `;
 
-  return rows as unknown as RetrievedChunk[];
+  // The OR match above lets a chunk in via a SINGLE shared word -- fine for a
+  // short, genuinely distinctive query ("Keeper", "AM Lead"), but for a longer
+  // natural-language question ("pricing calculator not showing any jobs in
+  // the drop down") a single generic word (e.g. "jobs") can match a large,
+  // unrelated document (the JD Generator SOP, a legal doc full of
+  // employment/job language) purely because that word is frequent there --
+  // ts_rank alone doesn't distinguish "matches on 1 of 8 distinctive terms"
+  // from "matches on the term that actually names the thing." Require at
+  // least 2 distinct query words to actually appear in the chunk once the
+  // query has enough words that "matched on just one" stops being meaningful;
+  // short queries (1-2 words) keep the original single-word-match behavior,
+  // since that's the exact case buildOrTsQuery's OR combinator exists for.
+  const minMatches = words.length >= 3 ? 2 : 1;
+  const filtered = (rows as unknown as RetrievedChunk[]).filter((row) => {
+    const haystack = `${row.heading || ""} ${row.chunk_text}`.toLowerCase();
+    // \w* after the word approximates Postgres's English-dictionary stemming
+    // (e.g. "job" also matching "jobs") well enough for this secondary check.
+    const matchCount = words.filter((w) => new RegExp(`\\b${w}\\w*\\b`).test(haystack)).length;
+    return matchCount >= minMatches;
+  });
+
+  return filtered.slice(0, topK);
 }
