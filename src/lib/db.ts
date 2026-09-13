@@ -123,6 +123,17 @@ export interface RetrievedChunk extends KbChunkRow {
   similarity: number;
 }
 
+// Below this cosine similarity, a chunk isn't actually about the query --
+// it's just the least-dissimilar thing in the whole knowledge base. Nearest-
+// neighbor search always returns topK rows even when nothing is genuinely
+// related, which is how a vague troubleshooting question about the Pricing
+// Calculator ended up citing the JD Generator SOP and an unrelated legal
+// knowledge base as "sources": those docs merely share generic SOP-handbook
+// vocabulary, not real topical overlap. This floor is a starting estimate,
+// not a tuned value -- revisit if it starts dropping genuinely relevant
+// chunks for other queries.
+const MIN_VECTOR_SIMILARITY = 0.35;
+
 /** Top-K cosine-similarity search against kb_chunks for a query embedding. */
 export async function searchSimilarChunks(
   queryEmbedding: number[],
@@ -136,6 +147,7 @@ export async function searchSimilarChunks(
       id, file_path, heading, page_url, chunk_index, chunk_text, content_hash,
       1 - (embedding <=> ${embeddingLiteral}::vector) AS similarity
     FROM kb_chunks
+    WHERE 1 - (embedding <=> ${embeddingLiteral}::vector) >= ${MIN_VECTOR_SIMILARITY}
     ORDER BY embedding <=> ${embeddingLiteral}::vector
     LIMIT ${topK};
   `;
