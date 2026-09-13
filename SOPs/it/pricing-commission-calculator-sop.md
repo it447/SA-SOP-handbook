@@ -4,7 +4,7 @@ department: it
 category: SOP
 owner: "Scale Army Engineering"
 last_updated: 2026-09-13
-hidden: true
+order: 8
 ---
 
 ## Goal

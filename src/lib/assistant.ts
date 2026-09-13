@@ -85,14 +85,33 @@ export async function retrieveContext(
   const topChunks = chunks.slice(0, 14);
 
   const index = getContentIndex();
-  const sources: AssistantSource[] = topChunks.map((c) => {
+
+  // Sources are for display, not grounding — the model still gets all
+  // `topChunks` in contextBlock below. Two things chunk-level sources get
+  // wrong for display: (1) the same page can contribute several chunks,
+  // showing up as several near-duplicate bullets for one source; (2) with
+  // the cap raised to 14 chunks (to help comparison/broad questions), that's
+  // a lot of bullets to dump on someone in Slack for an ordinary answer.
+  // Dedupe to one entry per page (first chunk wins) and cap the *displayed*
+  // list well below the chunk cap.
+  const seenPages = new Set<string>();
+  const sources: AssistantSource[] = [];
+  for (const c of topChunks) {
+    if (seenPages.has(c.file_path)) continue;
+    seenPages.add(c.file_path);
     const page = index.find((p) => p.relPath === c.file_path);
     const hidden = page?.frontmatter.hidden === true;
-    return {
-      title: hidden ? `Internal Legal Reference: ${c.heading || page?.frontmatter.title || c.file_path}` : c.heading || c.file_path,
+    sources.push({
+      // "Internal Reference" -- not "Legal Reference": hidden pages now also
+      // include non-legal tool docs (Deal Calculator, JD Generator, Pricing
+      // Calculator) whose commission/margin figures are business-sensitive,
+      // not legal ones. Labeling all of them "Legal" was misleading.
+      title: hidden ? `Internal Reference: ${page?.frontmatter.title || c.heading || c.file_path}` : c.heading || c.file_path,
       url: hidden ? null : c.page_url,
-    };
-  });
+    });
+    if (sources.length >= 5) break;
+  }
+
   const contextBlock =
     topChunks.length > 0
       ? topChunks
