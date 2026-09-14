@@ -251,12 +251,30 @@ export async function searchKeywordChunks(query: string, topK = 6): Promise<Retr
   // short queries (1-2 words) keep the original single-word-match behavior,
   // since that's the exact case buildOrTsQuery's OR combinator exists for.
   const minMatches = words.length >= 3 ? 2 : 1;
+
+  // A count-based minimum alone isn't enough: "pricing calculator is not
+  // showing any jobs in the drop down" still matched the JD Generator SOP
+  // on "jobs" + "drop" + "down" -- three generic, short words that show up
+  // in any doc that mentions job listings or dropdown UI, none of which
+  // actually name the Pricing Calculator. Longer words ("pricing",
+  // "calculator") are a decent proxy for "actually names the topic" versus
+  // short, common nouns/verbs that recur across unrelated tools' docs, so
+  // require at least one such word among the matches whenever the query has
+  // one to give -- short-word-only queries (mostly acronyms) fall back to
+  // the plain count check untouched.
+  const DISTINCTIVE_MIN_LENGTH = 6;
+  const distinctiveWords = new Set(words.filter((w) => w.length >= DISTINCTIVE_MIN_LENGTH));
+
   const filtered = (rows as unknown as RetrievedChunk[]).filter((row) => {
     const haystack = `${row.heading || ""} ${row.chunk_text}`.toLowerCase();
     // \w* after the word approximates Postgres's English-dictionary stemming
     // (e.g. "job" also matching "jobs") well enough for this secondary check.
-    const matchCount = words.filter((w) => new RegExp(`\\b${w}\\w*\\b`).test(haystack)).length;
-    return matchCount >= minMatches;
+    const matched = words.filter((w) => new RegExp(`\\b${w}\\w*\\b`).test(haystack));
+    if (matched.length < minMatches) return false;
+    if (words.length >= 3 && distinctiveWords.size > 0) {
+      return matched.some((w) => distinctiveWords.has(w));
+    }
+    return true;
   });
 
   return filtered.slice(0, topK);
