@@ -154,31 +154,19 @@ export async function retrieveContext(
   // having more chunks in the running.
   const topChunks = chunks.slice(0, 14);
 
-  // Sources are for display, not grounding — the model still gets all
-  // `topChunks` in contextBlock below. Two things chunk-level sources get
-  // wrong for display: (1) the same page can contribute several chunks,
-  // showing up as several near-duplicate bullets for one source; (2) with
-  // the cap raised to 14 chunks (to help comparison/broad questions), that's
-  // a lot of bullets to dump on someone in Slack for an ordinary answer.
-  // Dedupe to one entry per page (first chunk wins) and cap the *displayed*
-  // list well below the chunk cap.
-  const seenPages = new Set<string>();
+  // Sources were previously shown to the user alongside the answer (a
+  // "Sources:" list in Slack, a "Sources" panel in the web widget) --
+  // turned off per direct request: retrieval precision on that display
+  // list kept surfacing tangentially-related chunks (a passing mention of
+  // a tool's name in an unrelated troubleshooting note, etc.) as if they
+  // were equally-weighted citations, which read as noise/inaccurate no
+  // matter how much the underlying ranking improved. The model still gets
+  // full grounding from all of `topChunks` below -- this only stops
+  // surfacing which chunks that was to the end user. Both call sites
+  // (Slack's route.ts, the web widget) already render nothing when
+  // `sources` is empty, so returning [] here is enough to turn the
+  // feature off everywhere without touching either of them.
   const sources: AssistantSource[] = [];
-  for (const c of topChunks) {
-    if (seenPages.has(c.file_path)) continue;
-    seenPages.add(c.file_path);
-    const page = index.find((p) => p.relPath === c.file_path);
-    const hidden = page?.frontmatter.hidden === true;
-    sources.push({
-      // "Internal Reference" -- not "Legal Reference": hidden pages now also
-      // include non-legal tool docs (Deal Calculator, JD Generator, Pricing
-      // Calculator) whose commission/margin figures are business-sensitive,
-      // not legal ones. Labeling all of them "Legal" was misleading.
-      title: hidden ? `Internal Reference: ${page?.frontmatter.title || c.heading || c.file_path}` : c.heading || c.file_path,
-      url: hidden ? null : c.page_url,
-    });
-    if (sources.length >= 5) break;
-  }
 
   const contextBlock =
     topChunks.length > 0
