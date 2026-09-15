@@ -279,3 +279,28 @@ export async function searchKeywordChunks(query: string, topK = 6): Promise<Retr
 
   return filtered.slice(0, topK);
 }
+
+/**
+ * The earliest chunk (lowest chunk_index) for a given file -- used to boost
+ * a page's own overview content to the top of retrieval for a clear "what
+ * is <thing>" question (see lib/assistant.ts's title-match boost). Ranking
+ * alone isn't reliable for this: a short, word-dense chunk elsewhere in the
+ * corpus (e.g. a troubleshooting note that repeats a tool's name several
+ * times in a few lines) can out-rank that tool's own overview chunk on
+ * BOTH keyword ts_rank (term density) and vector similarity (the query
+ * embedding is dominated by that one repeated word too) -- reciprocal rank
+ * fusion doesn't help when a chunk genuinely wins on both signals. Going
+ * straight to the matched page's own first chunk sidesteps ranking
+ * entirely for this specific case.
+ */
+export async function getFirstChunkForFile(filePath: string): Promise<RetrievedChunk | null> {
+  await ensureSchema();
+  const { rows } = await sql`
+    SELECT id, file_path, heading, page_url, chunk_index, chunk_text, content_hash, 1 AS similarity
+    FROM kb_chunks
+    WHERE file_path = ${filePath}
+    ORDER BY chunk_index ASC
+    LIMIT 1;
+  `;
+  return (rows[0] as unknown as RetrievedChunk) ?? null;
+}
