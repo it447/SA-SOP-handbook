@@ -1,7 +1,52 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { retrieveRelevantChunks } from "@/lib/retrieve";
-import { getContentIndex } from "@/lib/content";
+import { getContentIndex, type PageEntry } from "@/lib/content";
+import { getFirstChunkForFile } from "@/lib/db";
+
+// Strips a leading definitional question phrase ("what is", "who's",
+// "define", etc.) to get at the actual subject, e.g. "what is hubspot" ->
+// "hubspot". Returns null for anything that isn't shaped like this kind of
+// question, since the title-match boost below should only ever kick in for
+// a genuine "what/who is X" ask, not an arbitrary query that happens to
+// contain a tool's name.
+const DEFINITIONAL_PREFIX_RE = /^(what\s+is|what\s+are|what'?s|whats|who\s+is|who'?s|whos|define|explain|tell me about|describe)\s+/i;
+
+function extractDefinitionalSubject(query: string): string | null {
+  const trimmed = query.trim().replace(/[?.!]+$/, "");
+  const match = trimmed.match(DEFINITIONAL_PREFIX_RE);
+  if (!match) return null;
+  const subject = trimmed
+    .slice(match[0].length)
+    .trim()
+    .replace(/^(a|an|the)\s+/i, "")
+    .toLowerCase();
+  return subject.length >= 3 ? subject : null;
+}
+
+/**
+ * Finds a page whose title IS the thing being asked about, for a clear
+ * "what is X" question -- e.g. "what is hubspot" -> the "HubSpot SOP" page.
+ * Strips generic doc-type suffixes ("SOP", "Glossary") before comparing, so
+ * "hubspot" matches "HubSpot SOP" and "keeper" matches "Keeper Password
+ * Manager SOP" (a substring match either direction, not just equality --
+ * the query is often shorter than the full title).
+ */
+function findTitleMatchedPage(query: string, index: PageEntry[]): PageEntry | null {
+  const subject = extractDefinitionalSubject(query);
+  if (!subject) return null;
+
+  for (const page of index) {
+    const title = page.frontmatter.title?.toLowerCase().trim();
+    if (!title) continue;
+    const strippedTitle = title.replace(/\s+(sop|glossary)\s*$/i, "").trim();
+    if (!strippedTitle) continue;
+    if (strippedTitle === subject || strippedTitle.startsWith(subject) || subject.startsWith(strippedTitle)) {
+      return page;
+    }
+  }
+  return null;
+}
 
 export interface AssistantSource {
   title: string;
@@ -77,6 +122,30 @@ export async function retrieveContext(
       chunks.push(c);
     }
   }
+
+  const index = getContentIndex();
+
+  // For a clear "what is X" question, go straight to X's own page instead
+  // of trusting ranking to sort it out -- a short, word-dense chunk
+  // elsewhere (e.g. a troubleshooting note repeating a tool's name several
+  // times) can out-rank that tool's own overview chunk on BOTH keyword and
+  // vector signals, which reciprocal rank fusion (see lib/retrieve.ts)
+  // doesn't fix since it only reorders what each signal already ranked
+  // highly. queries[0] is always the latest user message alone (see this
+  // function's own docstring on multi-query callers), which is what a
+  // "what is X" question actually looks like -- the combined-recent-turns
+  // variant would be polluted by prior conversation.
+  const titleMatch = queries[0] ? findTitleMatchedPage(queries[0], index) : null;
+  if (titleMatch) {
+    const boostChunk = await getFirstChunkForFile(titleMatch.relPath);
+    if (boostChunk) {
+      const key = `${boostChunk.file_path}#${boostChunk.chunk_index}`;
+      const existingIndex = chunks.findIndex((c) => `${c.file_path}#${c.chunk_index}` === key);
+      if (existingIndex !== -1) chunks.splice(existingIndex, 1);
+      chunks.unshift(boostChunk);
+    }
+  }
+
   // Cap the total so context doesn't balloon just because we ran more than
   // one query — 14 chunks across both queries. Bumped up from 10: a
   // two-entity comparison question ("difference between X and Y") needs
@@ -84,8 +153,6 @@ export async function retrieveContext(
   // shouldn't be able to crowd out a smaller, equally relevant one just by
   // having more chunks in the running.
   const topChunks = chunks.slice(0, 14);
-
-  const index = getContentIndex();
 
   // Sources are for display, not grounding — the model still gets all
   // `topChunks` in contextBlock below. Two things chunk-level sources get
