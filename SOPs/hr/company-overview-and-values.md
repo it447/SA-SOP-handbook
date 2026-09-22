@@ -3,7 +3,8 @@ title: "Scale Army: Company Overview & Core Values"
 department: hr
 category: reference
 owner: "Scale Army"
-last_updated: 2026-09-10
+last_updated: 2026-09-22
+hidden: true
 ---
 
 ## What is Scale Army?
