@@ -74,6 +74,7 @@ Default to SHORT answers. This is the most important rule — err toward brevity
 - **A how-to / process question** — the user wants to understand or perform a multi-step process ("how do I...", "what's the process for...", "walk me through..."). Give the direct answer in 1-3 sentences, or a tight bulleted list of the key steps — not a restatement of the whole SOP section.
 - **A broad/exhaustive request** — the user explicitly asks for everything ("walk me through the entire process end to end," "list every restricted country"). Only here should you go long, and only as long as what was actually asked, not as long as the source material happens to be.
 - **A troubleshooting / something's-broken report** — the user is describing a problem with a tool, not asking to be taught how it works ("X isn't showing up," "Y is blank," "I'm getting an error on Z"). If the SOP's troubleshooting section names a most-likely cause for this, lead with that ONE cause as a direct statement, not a hedge — e.g. "That's most likely a tab name change in the Google Sheet — check that first." Then, in the same sentence or the next, give exactly one fallback: who to check with if that's not it (e.g. "if the sheet looks fine, check with Engineering/IT"). Do not restate what the tool is, how it works, or every other unrelated troubleshooting entry in the SOP — that's for a how-to question, not a "this is broken" report.
+- **A request for a link to a document itself** — the user wants the actual link/URL to a specific SOP or page, not an explanation of it ("send me the link to the AM SOP bible," "link me the pricing calculator SOP," "where's the doc for X"). Each context chunk below is tagged with its own page's link in parentheses right after its heading — reply with ONLY that URL (plus the page's name), nothing else: no summary of the page's contents, no caveats. If that chunk's link says "internal reference, no public link" instead of a URL, say plainly that it's an internal-only doc with no direct link, rather than inventing one.
 - Whichever type it is, do NOT walk through every step, exception, and caveat in the source material by default. Give the headline answer; leave the fine print in the source document, which is exactly what the citation is for.
 - For how-to and broad questions, end with a short pointer to go deeper, e.g. "See the full SOP for exceptions and edge cases" — but never add that pointer to a single-fact lookup answer, since a one-line answer doesn't need one.
 - If the user then asks a follow-up like "give me more detail," "explain that," or "what about X edge case," go deeper at that point — the short-by-default rule applies to the first answer to a new question, not to explicit requests for more.
@@ -84,7 +85,7 @@ If the answer isn't contained in the context, say "I don't know — that isn't c
 
 If a question has several parts and the context answers most of them but is silent on just one sub-detail (e.g. it gives the full process but doesn't state a turnaround time, or gives the policy but not one specific edge case), answer the parts you can fully, then note the specific missing piece in a natural sentence — don't tack on the full "I don't know — that isn't covered..." boilerplate for a partial gap in an otherwise-answered question. Save that exact phrase for when the context has nothing relevant at all.
 
-When you answer, mention which SOP(s) the information came from by name (e.g. "per the Offboarding SOP...") so the user knows where to look for the full detail, but the source links shown alongside the answer already handle precise citation — you don't need to dump raw quotes to prove it.
+When you answer, mention which SOP(s) the information came from by name (e.g. "per the Offboarding SOP...") so the user knows where to look for the full detail — no separate source list is shown alongside your answer, so this mention is the only citation the user gets; you don't need to dump raw quotes to prove it, just name the document.
 
 Context:
 ${contextBlock}`;
@@ -168,10 +169,30 @@ export async function retrieveContext(
   // feature off everywhere without touching either of them.
   const sources: AssistantSource[] = [];
 
+  // The app's own base URL, so a link the model echoes back (e.g. answering
+  // "send me the link to X") is a complete, clickable URL rather than a bare
+  // route like "/account-management/am-sop-bible" that means nothing typed
+  // into Slack or read out of a plain-text context block. Same env var/
+  // fallback pattern already used for this in the Slack and admin-invite
+  // routes -- there's no request object here to read a host header from
+  // directly, since this function is shared by both surfaces.
+  const baseUrl = process.env.APP_URL || "";
+
   const contextBlock =
     topChunks.length > 0
       ? topChunks
-          .map((c, i) => `[Source ${i + 1}: ${c.heading || c.file_path} (${c.page_url})]\n${c.chunk_text}`)
+          .map((c, i) => {
+            const page = index.find((p) => p.relPath === c.file_path);
+            // A hidden page's `route` still resolves to a URL string, but
+            // the route 404s for anyone who isn't this assistant (see
+            // PageFrontmatter.hidden) -- handing that out as "the link"
+            // would send someone to a dead page. Label it as internal-only
+            // instead so the model can say that rather than fabricate a
+            // working link.
+            const linkLabel =
+              page?.frontmatter.hidden === true ? "internal reference, no public link" : `${baseUrl}${c.page_url}`;
+            return `[Source ${i + 1}: ${c.heading || c.file_path} (${linkLabel})]\n${c.chunk_text}`;
+          })
           .join("\n\n---\n\n")
       : "(no context retrieved)";
   return { contextBlock, sources };
