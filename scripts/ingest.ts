@@ -15,7 +15,7 @@ import "dotenv/config";
 import crypto from "node:crypto";
 import { getContentIndex, type PageEntry } from "../src/lib/content";
 import { embedTexts } from "../src/lib/embeddings";
-import { upsertChunk, deleteStaleChunks, ensureSchema } from "../src/lib/db";
+import { upsertChunk, deleteStaleChunks, ensureSchema, getExistingHashesForFile } from "../src/lib/db";
 
 // Rough heuristic: ~4 characters per token for English text.
 const CHARS_PER_TOKEN = 4;
@@ -157,27 +157,42 @@ export async function runIngest(): Promise<IngestSummary> {
       continue;
     }
 
-    // Embed in one batch per file to minimize API calls.
-    const embeddings = await embedTexts(
-      chunks.map((c) => c.text),
-      "document"
-    );
+    // Skip re-embedding/re-upserting chunks whose content hasn't changed
+    // since the last run -- without this, ingest re-embeds and rewrites
+    // EVERY chunk of EVERY file on every run regardless of what actually
+    // changed, which is what the module doc above promises doesn't happen.
+    // That made a full ingest slow enough to exceed the admin route's 60s
+    // Vercel function timeout once the vault grew past a few dozen
+    // sizeable SOPs.
+    const existingHashes = await getExistingHashesForFile(page.relPath);
+    const newIndices = hashes
+      .map((hash, i) => (existingHashes.has(hash) ? -1 : i))
+      .filter((i) => i !== -1);
 
-    for (let i = 0; i < chunks.length; i++) {
-      const chunk = chunks[i];
-      const hash = hashes[i];
-      await upsertChunk({
-        id: `${page.relPath}#${chunk.index}:${hash.slice(0, 12)}`,
-        filePath: page.relPath,
-        heading: chunk.heading,
-        pageUrl: page.route,
-        chunkIndex: chunk.index,
-        chunkText: chunk.text,
-        contentHash: hash,
-        embedding: embeddings[i],
-      });
-      totalChunks += 1;
+    if (newIndices.length > 0) {
+      // Embed in one batch per file to minimize API calls.
+      const embeddings = await embedTexts(
+        newIndices.map((i) => chunks[i].text),
+        "document"
+      );
+
+      for (let j = 0; j < newIndices.length; j++) {
+        const i = newIndices[j];
+        const chunk = chunks[i];
+        const hash = hashes[i];
+        await upsertChunk({
+          id: `${page.relPath}#${chunk.index}:${hash.slice(0, 12)}`,
+          filePath: page.relPath,
+          heading: chunk.heading,
+          pageUrl: page.route,
+          chunkIndex: chunk.index,
+          chunkText: chunk.text,
+          contentHash: hash,
+          embedding: embeddings[j],
+        });
+      }
     }
+    totalChunks += chunks.length;
 
     // Remove any chunks left over from a previous run whose content no
     // longer matches (e.g. the file shrank or a section was removed).
