@@ -101,6 +101,23 @@ export async function upsertChunk(params: {
   `;
 }
 
+/**
+ * The content_hash of every chunk already stored for a file -- lets ingest
+ * skip re-embedding (and re-upserting) chunks whose text hasn't changed
+ * since the last run, rather than calling Voyage and writing every chunk of
+ * every file on every ingest regardless of whether anything actually
+ * changed. That's what made a full ingest slow enough to blow past the
+ * admin route's 60s Vercel function timeout once the vault grew past a
+ * few dozen sizeable SOPs -- Vercel kills the function and returns its own
+ * platform error page (HTML, not JSON), which is what shows up client-side
+ * as "Unexpected token 'A', "An error o"... is not valid JSON".
+ */
+export async function getExistingHashesForFile(filePath: string): Promise<Set<string>> {
+  await ensureSchema();
+  const { rows } = await sql`SELECT content_hash FROM kb_chunks WHERE file_path = ${filePath};`;
+  return new Set(rows.map((r) => r.content_hash as string));
+}
+
 /** Remove chunks for a file whose content_hash no longer matches (stale chunks from a shrunk file). */
 export async function deleteStaleChunks(filePath: string, keepHashes: string[]): Promise<void> {
   await ensureSchema();
