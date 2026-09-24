@@ -225,3 +225,37 @@ During the call:
 Once a client is a happy client, the goal is to turn them into a source of new clients. Each AM has a monthly referral goal, and should proactively ask existing happy clients for referrals every month.
 
 > 1 brilliant AM + 1 happy client = more clients and more revenue.
+
+---
+
+## Helpful Information & Links
+
+- [Add A Client On Slack](https://drive.google.com/file/d/1q4rqCHi9-89KCIIPLBEMpW_KsOdaiZAV/view)
+- [Client Folders Google Drive](https://drive.google.com/drive/folders/1Zvl6h5QhlbcjBn3RoEamjFWqXDnjQ23Z?usp=drive_link)
+  - [KOC Notes Structure](https://docs.google.com/document/d/12uO4QID3bad_JDx7dtuRxglMbT_wZDj2hIf2VhfE6_8/edit?usp=sharing)
+- [Killing a Deal](https://docs.google.com/document/d/1LsYVIwalSG1mJF6IVrSJEhg4DdDzVsCiRDcBRfRpQwI/edit?usp=sharing)
+- [How to Get a Client's Phone Number](https://docs.google.com/document/d/1DS_Vzwir1SR3wsEluIoXKPqXW0EwFf2-Xbn072vJtYo/edit?usp=sharing)
+- [Goodbye's, Break-ups, and Helpful Comms](https://docs.google.com/document/d/1QbAAFf6T8M2UvKqZdz8obXPNlftjACrVUHhKLsgjl0E/edit?usp=sharing)
+- [MSA or Addendum with Multiple Hires](https://docs.google.com/document/d/1RmS2IteE-MjWPaOfJt4-NNP_jZoMl2JUQxvRkP38haw/edit?usp=sharing)
+- [Client FAQ's: Deposits, Reuse, and Refunds](https://docs.google.com/document/d/1wyIjple3VUqrp3hrSvn917BZcPVSXnPhqG8cXpA694g/edit?usp=sharing)
+- [Helpful Links](https://docs.google.com/document/d/12Y9A4o9K-v3ahib-P7HoIKrJWfKHsDgXguT37UNdStI/edit?usp=sharing)
+- [Upsell SOP](https://docs.google.com/document/d/13YCpADhf8kXtW16_ecD2dDbn3cwkr9_s69DggpFl1pE/edit?usp=sharing)
+- [AM Trainings](https://docs.google.com/document/d/1RdyQn3D_4Ukf1PZJuXg-kG-rNBsaUyaVNH-uBQqk4LQ/edit?usp=sharing)
+- [Clarifications on MSA](https://docs.google.com/document/d/1VnFX6WADWaE7RAcIPbE04ChycNnW_hp9L1quwnIruLo/edit?usp=sharing)
+- [Sharing Candidates Contract](https://docs.google.com/document/d/1TOShFbFAflyxBeBOKfqL7afg8TkpUhn-VbQSD67r_rg/edit?usp=sharing)
+- [Upsell Playbook](https://docs.google.com/document/d/1p7LqI1hVK6Wo5pif0jssJT8hDz0xJSKLTprxUt0QpKI/edit?usp=sharing)
+- Onboarding PPTs depending on your client: [Async Onboarding](https://docs.google.com/presentation/d/1i0zbd4hYGuS862FPKXGTsRFYAwg0I52x8vkFPx25xNI/edit?slide=id.g3d8563936a4_0_3#slide=id.g3d8563936a4_0_3), [SMB Onboarding](https://docs.google.com/presentation/d/1Xbzlpd5QpLLBrC8PCHcqj9aT1mGj8abINtWf5HEcwn8/edit?slide=id.g3d8563936a4_0_3#slide=id.g3d8563936a4_0_3), [Enterprise Onboarding](https://docs.google.com/presentation/d/11PFIZNw0rHYBG_KnYbn2Y2lArlEbnXO30_B-_3OaoKY/edit?usp=sharing)
+- [Checklist for how to run Onboarding Call](https://docs.google.com/document/d/1v1QWHOUgafF_CcWC0rdcsTOV0c01Yo1P_7Iw_iXUuE4/edit?usp=sharing)
+- Onboarding Training: [PPT](https://drive.google.com/file/d/1WeS5mbsis1VwxgRNoW6haI9TSXMzyCUr/view?usp=drive_link), [Recording](https://drive.google.com/file/d/1lOk7BEbuNbzzJrBbz3kjnGkYGZMcZ5EX/view?usp=drive_web)
+- CS SOP (Before Portfolios Model): [Doc](https://docs.google.com/document/d/12k1hPXo96wkwUwu8JLkSfhIP7CnpQnzgYo_Od5b_BiY/edit?tab=t.0)
+- [Email Templates](https://docs.google.com/document/d/1b48tynFRMknXXvU12xeyDgJ-CFCM4Fdcd8jZTnGsKD8/edit?tab=t.0)
+- Hubspot: Open a New Deal from Scratch — [Recording](https://drive.google.com/file/d/15-fB1F7beCXe3JOKwdJI2Odn8rMnl0s6/view?usp=drive_web)
+- [Restricted Industries](https://docs.google.com/document/d/1BIF3oXa5V4s9hDZtHgpxlSCmpnXT8ra1/edit)
+- [AM SOP for Direct Placements](https://docs.google.com/document/d/1h4864MdLzyz3_upuPU2vaC6RyOa-7iTDauxPtwz_OW0/edit?tab=t.0)
+  - [Presentation](https://docs.google.com/presentation/d/1KmYUePfUAnVkHkkZnPW20M-BVoziCh1XeCG-ofa4q1I/edit?slide=id.p1#slide=id.p1)
+  - [Legal FAQ for Direct Placement](https://docs.google.com/document/d/1F5SPthPg0gcaAyhmmUY-BhSUL8yFdDaVRYkufN1ML2o/edit?tab=t.0)
+- [Reconciliation Dashboard](https://reconciliationdashboard-dusky.vercel.app/#)
+  - Password: `$c4le4rmy2026!`
+  - [Explanation Loom](https://www.loom.com/share/044496952bb348368acdb5b56f9dd808)
+- [Bootcamp Attendance SOP](https://docs.google.com/document/d/1DVS0c7RIMDyV2JStX4mc-ZN__o_6kxbIoStcWWN1Mzg/edit?usp=sharing)
+- [Upsell, Referral, Rescope, BPO Definitions](https://docs.google.com/document/d/1nJpNh93M323tfEVwMcwpPu-ZNpS1BV5eXGbMagpgPag/edit?tab=t.0)
