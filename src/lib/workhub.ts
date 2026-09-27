@@ -23,36 +23,57 @@ export function workhubConfigured(): boolean {
   return !!(process.env.WORKHUB_URL && process.env.WORKHUB_API_KEY);
 }
 
-const slackProfiles = new Map<string, { email: string | null; tz: string | null }>();
+const slackProfiles = new Map<string, Asker>();
+
+/** Why WorkHub lookups aren't available for this message, in plain words (null = they are). */
+export function workhubConfigProblem(): string | null {
+  const missing = ["WORKHUB_URL", "WORKHUB_API_KEY"].filter((k) => !process.env[k]);
+  return missing.length ? `the assistant's server is missing the ${missing.join(" and ")} setting` : null;
+}
 
 /**
- * Looks up a Slack user's email + timezone via users.info. Needs the bot
- * scopes users:read and users:read.email; returns null email without them.
+ * Looks up a Slack user's email + timezone via users.info, and says why when
+ * it can't. Needs the bot scopes users:read and users:read.email.
  */
-export async function getSlackAsker(userId: string | undefined): Promise<Asker | null> {
-  if (!userId) return null;
+export async function resolveSlackAsker(userId: string | undefined): Promise<{ asker: Asker | null; problem: string | null }> {
+  if (!userId) return { asker: null, problem: "Slack didn't say who sent the message" };
   const cached = slackProfiles.get(userId);
-  if (cached) return cached.email ? { email: cached.email, tz: cached.tz } : null;
+  if (cached) return { asker: cached, problem: null };
 
   const token = process.env.SLACK_BOT_TOKEN;
-  if (!token) return null;
+  if (!token) return { asker: null, problem: "the assistant's server is missing SLACK_BOT_TOKEN" };
   try {
     const res = await fetch(`https://slack.com/api/users.info?user=${encodeURIComponent(userId)}`, {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     });
-    const json = (await res.json()) as { ok: boolean; error?: string; user?: { tz?: string; profile?: { email?: string } } };
+    const json = (await res.json()) as { ok: boolean; error?: string; needed?: string; user?: { tz?: string; profile?: { email?: string } } };
     if (!json.ok) {
-      console.error(`Slack users.info failed: ${json.error} (the bot needs the users:read and users:read.email scopes)`);
-      return null;
+      console.error(`Slack users.info failed: ${json.error}${json.needed ? ` (needs ${json.needed})` : ""}`);
+      return {
+        asker: null,
+        problem: json.error === "missing_scope"
+          ? `the Slack app is missing the ${json.needed || "users:read"} permission (add it under OAuth & Permissions, then reinstall the app)`
+          : `Slack wouldn't share your profile (${json.error})`,
+      };
     }
-    const profile = { email: json.user?.profile?.email ?? null, tz: json.user?.tz ?? null };
-    slackProfiles.set(userId, profile);
-    return profile.email ? { email: profile.email, tz: profile.tz } : null;
+    const email = json.user?.profile?.email;
+    if (!email) {
+      console.error("Slack users.info returned no email — the app needs the users:read.email scope");
+      return { asker: null, problem: "the Slack app can't see your email yet (add the users:read.email permission under OAuth & Permissions, then reinstall the app)" };
+    }
+    const asker = { email, tz: json.user?.tz ?? null };
+    slackProfiles.set(userId, asker);
+    return { asker, problem: null };
   } catch (err) {
     console.error("Slack users.info failed", err);
-    return null;
+    return { asker: null, problem: "Slack couldn't be reached to check who you are" };
   }
+}
+
+/** Kept for callers that only need the asker. */
+export async function getSlackAsker(userId: string | undefined): Promise<Asker | null> {
+  return (await resolveSlackAsker(userId)).asker;
 }
 
 /** Calls WorkHub's /api/assistant/tasks for this person. Never throws — errors come back as { error }. */
@@ -111,4 +132,11 @@ You also have a tool, get_my_workhub_tasks, that reads the asking person's own t
 - If there are none, say so in one short line. If the result is truncated, say how many more there are and point to WorkHub (workhubUrl).
 - If the tool returns an error: "not_found" means they aren't set up in WorkHub yet — tell them to ask an admin to add them; anything else, say WorkHub couldn't be reached right now.
 - The tool only covers the asker's own assigned tasks. If they ask about someone else's tasks, say you can only look up their own.`;
+}
+
+/** Prompt section for when WorkHub lookups aren't possible, so the answer says why instead of "not in the SOPs". */
+export function workhubUnavailableSection(problem: string): string {
+  return `
+
+WorkHub tasks: if the question is about the person's own tasks, to-dos, deadlines or what's overdue/due soon, don't say it isn't covered in the SOP handbook. Instead reply in one or two lines: "I can't check your WorkHub tasks right now: ${problem}." and suggest they open WorkHub (${(process.env.WORKHUB_URL || "https://sa-work-hub.vercel.app").replace(/\/$/, "")}/tasks) in the meantime.`;
 }

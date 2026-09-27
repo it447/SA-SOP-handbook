@@ -3,7 +3,7 @@ import { generateText } from "ai";
 import { retrieveRelevantChunks } from "@/lib/retrieve";
 import { getContentIndex, type PageEntry } from "@/lib/content";
 import { getFirstChunkForFile } from "@/lib/db";
-import { workhubConfigured, workhubPromptSection, workhubTools, type Asker } from "@/lib/workhub";
+import { workhubConfigured, workhubPromptSection, workhubTools, workhubUnavailableSection, type Asker } from "@/lib/workhub";
 
 // Strips a leading definitional question phrase ("what is", "who's",
 // "define", etc.) to get at the actual subject, e.g. "what is hubspot" ->
@@ -62,7 +62,7 @@ export interface AssistantSource {
  * chat widget (app/api/chat/route.ts) and the non-streaming Slack bot
  * (app/api/slack/events/route.ts) so the two surfaces answer consistently.
  */
-export function buildSystemPrompt(contextBlock: string, opts: { workhub?: "slack" | "web" } = {}): string {
+export function buildSystemPrompt(contextBlock: string, opts: { workhub?: "slack" | "web"; workhubProblem?: string | null } = {}): string {
   return `You are the Scale Army internal knowledge-base assistant — a helpful colleague who has read all the SOPs, not a document search tool.
 
 Ground every answer ONLY in the context below, retrieved from Scale Army's internal SOP handbook. But don't just quote or copy it verbatim:
@@ -88,7 +88,7 @@ If a question has several parts and the context answers most of them but is sile
 
 When you answer, mention which SOP(s) the information came from by name (e.g. "per the Offboarding SOP...") so the user knows where to look for the full detail — no separate source list is shown alongside your answer, so this mention is the only citation the user gets; you don't need to dump raw quotes to prove it, just name the document.
 
-${opts.workhub ? workhubPromptSection(opts.workhub) : ""}
+${opts.workhub ? workhubPromptSection(opts.workhub) : opts.workhubProblem ? workhubUnavailableSection(opts.workhubProblem) : ""}
 
 Context:
 ${contextBlock}`;
@@ -209,7 +209,8 @@ export async function retrieveContext(
  */
 export async function answerQuestion(
   query: string,
-  asker?: Asker | null
+  asker?: Asker | null,
+  workhubProblem?: string | null
 ): Promise<{ answer: string; sources: AssistantSource[] }> {
   const openRouterKey = process.env.OPENROUTER_API_KEY;
   if (!openRouterKey) {
@@ -227,7 +228,7 @@ export async function answerQuestion(
   const withWorkhub = !!asker && workhubConfigured();
   const { text } = await generateText({
     model: openrouter(model),
-    system: buildSystemPrompt(contextBlock, withWorkhub ? { workhub: "slack" } : {}),
+    system: buildSystemPrompt(contextBlock, withWorkhub ? { workhub: "slack" } : { workhubProblem }),
     messages: [{ role: "user", content: query }],
     ...(withWorkhub ? { tools: workhubTools(asker!), maxSteps: 3 } : {}),
   });
