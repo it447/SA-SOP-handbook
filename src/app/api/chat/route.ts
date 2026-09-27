@@ -1,7 +1,10 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { streamText, type CoreMessage } from "ai";
+import type { NextRequest } from "next/server";
 import { buildSystemPrompt, retrieveContext, type AssistantSource } from "@/lib/assistant";
 import { VoyageConfigError } from "@/lib/embeddings";
+import { getUserFromSessionToken, SESSION_COOKIE } from "@/lib/session";
+import { workhubConfigured, workhubTools } from "@/lib/workhub";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,7 +20,7 @@ export const dynamic = "force-dynamic";
  * comes in — all config/env reads happen inside the POST handler, so
  * `next build` never needs live credentials.
  */
-export async function POST(req: Request): Promise<Response> {
+export async function POST(req: NextRequest): Promise<Response> {
   const openRouterKey = process.env.OPENROUTER_API_KEY;
   if (!openRouterKey) {
     return Response.json(
@@ -79,11 +82,17 @@ export async function POST(req: Request): Promise<Response> {
 
   const model = process.env.OPENROUTER_MODEL || "anthropic/claude-sonnet-5";
 
+  // The signed-in person's WorkHub tasks, when WorkHub is configured (see
+  // lib/workhub.ts). Their email comes from the session, not the message.
+  const user = workhubConfigured() ? await getUserFromSessionToken(req.cookies.get(SESSION_COOKIE)?.value) : null;
+  const asker = user ? { email: user.email } : null;
+
   try {
     const result = await streamText({
       model: openrouter(model),
-      system: buildSystemPrompt(contextBlock),
+      system: buildSystemPrompt(contextBlock, asker ? { workhub: "web" } : {}),
       messages,
+      ...(asker ? { tools: workhubTools(asker), maxSteps: 3 } : {}),
     });
 
     // Vercel AI SDK data stream response, with retrieved sources attached as a
