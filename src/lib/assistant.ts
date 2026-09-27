@@ -3,6 +3,7 @@ import { generateText } from "ai";
 import { retrieveRelevantChunks } from "@/lib/retrieve";
 import { getContentIndex, type PageEntry } from "@/lib/content";
 import { getFirstChunkForFile } from "@/lib/db";
+import { workhubConfigured, workhubPromptSection, workhubTools, type Asker } from "@/lib/workhub";
 
 // Strips a leading definitional question phrase ("what is", "who's",
 // "define", etc.) to get at the actual subject, e.g. "what is hubspot" ->
@@ -61,7 +62,7 @@ export interface AssistantSource {
  * chat widget (app/api/chat/route.ts) and the non-streaming Slack bot
  * (app/api/slack/events/route.ts) so the two surfaces answer consistently.
  */
-export function buildSystemPrompt(contextBlock: string): string {
+export function buildSystemPrompt(contextBlock: string, opts: { workhub?: "slack" | "web" } = {}): string {
   return `You are the Scale Army internal knowledge-base assistant — a helpful colleague who has read all the SOPs, not a document search tool.
 
 Ground every answer ONLY in the context below, retrieved from Scale Army's internal SOP handbook. But don't just quote or copy it verbatim:
@@ -86,6 +87,8 @@ If the answer isn't contained in the context, say "I don't know — that isn't c
 If a question has several parts and the context answers most of them but is silent on just one sub-detail (e.g. it gives the full process but doesn't state a turnaround time, or gives the policy but not one specific edge case), answer the parts you can fully, then note the specific missing piece in a natural sentence — don't tack on the full "I don't know — that isn't covered..." boilerplate for a partial gap in an otherwise-answered question. Save that exact phrase for when the context has nothing relevant at all.
 
 When you answer, mention which SOP(s) the information came from by name (e.g. "per the Offboarding SOP...") so the user knows where to look for the full detail — no separate source list is shown alongside your answer, so this mention is the only citation the user gets; you don't need to dump raw quotes to prove it, just name the document.
+
+${opts.workhub ? workhubPromptSection(opts.workhub) : ""}
 
 Context:
 ${contextBlock}`;
@@ -205,7 +208,8 @@ export async function retrieveContext(
  * (app/api/chat/route.ts), which streams via the same retrieval + prompt.
  */
 export async function answerQuestion(
-  query: string
+  query: string,
+  asker?: Asker | null
 ): Promise<{ answer: string; sources: AssistantSource[] }> {
   const openRouterKey = process.env.OPENROUTER_API_KEY;
   if (!openRouterKey) {
@@ -217,10 +221,15 @@ export async function answerQuestion(
   const openrouter = createOpenAI({ apiKey: openRouterKey, baseURL: "https://openrouter.ai/api/v1" });
   const model = process.env.OPENROUTER_MODEL || "anthropic/claude-sonnet-5";
 
+  // With a known asker and WorkHub configured, the model can also look up
+  // their own WorkHub tasks (see lib/workhub.ts); maxSteps lets it call the
+  // tool and then write the answer from the result.
+  const withWorkhub = !!asker && workhubConfigured();
   const { text } = await generateText({
     model: openrouter(model),
-    system: buildSystemPrompt(contextBlock),
+    system: buildSystemPrompt(contextBlock, withWorkhub ? { workhub: "slack" } : {}),
     messages: [{ role: "user", content: query }],
+    ...(withWorkhub ? { tools: workhubTools(asker!), maxSteps: 3 } : {}),
   });
 
   return { answer: text, sources };

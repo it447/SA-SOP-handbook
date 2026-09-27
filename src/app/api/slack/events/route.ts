@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { answerQuestion } from "@/lib/assistant";
 import { postSlackMessage, verifySlackSignature } from "@/lib/slack";
+import { getSlackAsker } from "@/lib/workhub";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -92,7 +93,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { answer, sources } = await answerQuestion(question);
+    // Who's asking (Slack profile email + timezone), so WorkHub questions
+    // like "how many overdue tasks do I have?" read their own tasks.
+    const asker = await getSlackAsker(event.user);
+    const { answer, sources } = await answerQuestion(question, asker);
     // Slack's <url|text> link syntax needs an absolute URL — page_url from
     // the retriever is a relative site path (e.g. "/hr/..."), which Slack
     // can't render as a link and just shows as broken raw text instead.
