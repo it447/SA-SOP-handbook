@@ -83,12 +83,24 @@ export async function fetchWorkhubTasks(asker: Asker, filter: string): Promise<u
   if (asker.tz) params.set("tz", asker.tz);
   try {
     const res = await fetch(`${base}/api/assistant/tasks?${params}`, {
-      headers: { Authorization: `Bearer ${process.env.WORKHUB_API_KEY}` },
+      headers: { Authorization: `Bearer ${process.env.WORKHUB_API_KEY?.trim()}` },
       cache: "no-store",
+      redirect: "manual",
     });
+    // A redirect means WorkHub sent us to its sign-in page: the deployed
+    // WorkHub doesn't have the assistant API yet (or WORKHUB_URL is wrong).
+    if (res.status >= 300 && res.status < 400) {
+      return { error: "redirected", message: `WorkHub redirected the request (HTTP ${res.status}) instead of answering. Check that WORKHUB_URL is https://sa-work-hub.vercel.app and that WorkHub has been redeployed with the assistant API.` };
+    }
     const body = await res.json().catch(() => null);
-    if (!res.ok) {
-      return { error: body?.error || `http_${res.status}`, message: body?.message || `WorkHub returned HTTP ${res.status}.` };
+    if (!res.ok || !body) {
+      const why = body?.error === "unauthorized"
+        ? "WorkHub rejected the password: WORKHUB_API_KEY here must exactly match ASSISTANT_API_KEY in WorkHub (then redeploy both)."
+        : body?.error === "not_configured"
+          ? "WorkHub doesn't have ASSISTANT_API_KEY set yet (add it in WorkHub's Vercel settings and redeploy WorkHub)."
+          : body?.message || `WorkHub returned HTTP ${res.status}.`;
+      console.error(`WorkHub assistant API error: ${res.status} ${body?.error ?? ""}`);
+      return { error: body?.error || `http_${res.status}`, message: why };
     }
     return body;
   } catch (err) {
@@ -130,7 +142,7 @@ WorkHub tasks (overrides the "context only" and "I don't know" rules above for t
 You also have a tool, get_my_workhub_tasks, that reads the asking person's own tasks from WorkHub, Scale Army's task manager. Use it whenever the question is about their tasks, to-dos, assignments, deadlines, workload, what's overdue, due today or this week, or what they recently finished — answer those from the tool, never from the SOP context, and never reply that it isn't covered in the SOP handbook. Choose the filter that fits the question (overdue, today, week, open, no_date, done_recent).
 - Lead with the direct answer, usually the count ("You have 3 overdue tasks:"), then list at most 10 tasks, one per line starting with "-": title, project, and due date (plus "N days overdue" when overdue). ${link}
 - If there are none, say so in one short line. If the result is truncated, say how many more there are and point to WorkHub (workhubUrl).
-- If the tool returns an error: "not_found" means they aren't set up in WorkHub yet — tell them to ask an admin to add them; anything else, say WorkHub couldn't be reached right now.
+- If the tool returns an error: "not_found" means they aren't set up in WorkHub yet — tell them to ask an admin to add them. For any other error, say you couldn't check WorkHub and repeat the tool's "message" word for word, so whoever set this up can see what to fix.
 - The tool only covers the asker's own assigned tasks. If they ask about someone else's tasks, say you can only look up their own.`;
 }
 
