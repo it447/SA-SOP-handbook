@@ -76,6 +76,10 @@ export async function getSlackAsker(userId: string | undefined): Promise<Asker |
   return (await resolveSlackAsker(userId)).asker;
 }
 
+// The shared key as pasted into Vercel, minus anything after the first
+// space/newline (e.g. a terminal prompt copied along with it).
+const workhubKey = () => (process.env.WORKHUB_API_KEY || "").trim().split(/\s+/)[0];
+
 /** Calls WorkHub's /api/assistant/tasks for this person. Never throws — errors come back as { error }. */
 export async function fetchWorkhubTasks(asker: Asker, filter: string): Promise<unknown> {
   const base = (process.env.WORKHUB_URL || "").replace(/\/$/, "");
@@ -83,7 +87,7 @@ export async function fetchWorkhubTasks(asker: Asker, filter: string): Promise<u
   if (asker.tz) params.set("tz", asker.tz);
   try {
     const res = await fetch(`${base}/api/assistant/tasks?${params}`, {
-      headers: { Authorization: `Bearer ${process.env.WORKHUB_API_KEY?.trim()}` },
+      headers: { Authorization: `Bearer ${workhubKey()}` },
       cache: "no-store",
       redirect: "manual",
     });
@@ -104,7 +108,9 @@ export async function fetchWorkhubTasks(asker: Asker, filter: string): Promise<u
     }
     return body;
   } catch (err) {
-    return { error: "unreachable", message: `Couldn't reach WorkHub: ${err instanceof Error ? err.message : String(err)}` };
+    // Never echo the raw error: fetch errors can include the header value (the key).
+    console.error("WorkHub request failed", err instanceof Error ? err.name : "error");
+    return { error: "unreachable", message: "Couldn't reach WorkHub (network error). Check WORKHUB_URL and try again." };
   }
 }
 
