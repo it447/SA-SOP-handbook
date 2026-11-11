@@ -1,10 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { answerQuestion } from "@/lib/assistant";
-import { postSlackMessage, verifySlackSignature } from "@/lib/slack";
+import {
+  addSlackReaction,
+  getBotUserId,
+  getSlackPermalink,
+  postSlackMessage,
+  verifySlackSignature,
+} from "@/lib/slack";
+import { findAwaitingReason, recordFeedbackMessage, setFeedbackReason, setFeedbackRating } from "@/lib/db";
 import { resolveSlackAsker, workhubConfigProblem } from "@/lib/workhub";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
+
+// Either thumbs-up counts as a 👍, either thumbs-down as a 👎 -- Slack's
+// reaction name omits the skin-tone variant suffix some clients add.
+const UP_REACTIONS = new Set(["+1", "thumbsup"]);
+const DOWN_REACTIONS = new Set(["-1", "thumbsdown"]);
 
 interface SlackEvent {
   type: string;
@@ -16,6 +28,9 @@ interface SlackEvent {
   text?: string;
   ts: string;
   thread_ts?: string;
+  // reaction_added/reaction_removed only:
+  reaction?: string;
+  item?: { type: string; channel: string; ts: string };
 }
 
 interface SlackPayload {
@@ -76,9 +91,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
+  // A 👍/👎 on one of the bot's own answers -- see lib/db.ts's kb_feedback.
+  if (event.type === "reaction_added") {
+    await handleReaction(event);
+    return NextResponse.json({ ok: true });
+  }
+
   // Ignore anything from a bot (including ourselves) and message edits/etc.
   if (event.bot_id || event.subtype) {
     return NextResponse.json({ ok: true });
+  }
+
+  // A reply inside a thread we're tracking for a "what went wrong?" reason,
+  // from the same person who gave the 👎 -- consume it as the reason instead
+  // of treating it as a new question.
+  if (event.type === "message" && event.thread_ts && event.user && event.text) {
+    const consumed = await tryConsumeFeedbackReason(event);
+    if (consumed) return NextResponse.json({ ok: true });
   }
 
   const isMention = event.type === "app_mention";
@@ -111,11 +140,34 @@ export async function POST(req: NextRequest) {
           sources.map((s) => (s.url ? `• <${appUrl}${s.url}|${s.title}>` : `• ${s.title}`)).join("\n")
         : "";
 
-    await postSlackMessage({
+    const threadTs = event.thread_ts || event.ts;
+    const { ts: messageTs } = await postSlackMessage({
       channel: event.channel,
       text: answer + sourcesBlock,
-      threadTs: event.thread_ts || event.ts,
+      threadTs,
     });
+
+    // Best-effort feedback tracking: hint at the reaction options and record
+    // this message so a later 👍/👎 can be matched back to this Q&A. None of
+    // this should block or fail the actual answer if Slack hiccups.
+    try {
+      const permalink = await getSlackPermalink({ channel: event.channel, messageTs });
+      await recordFeedbackMessage({
+        channel: event.channel,
+        messageTs,
+        threadTs,
+        permalink,
+        askerUserId: event.user ?? null,
+        question,
+        answer,
+      });
+      await Promise.all([
+        addSlackReaction({ channel: event.channel, timestamp: messageTs, name: "thumbsup" }),
+        addSlackReaction({ channel: event.channel, timestamp: messageTs, name: "thumbsdown" }),
+      ]);
+    } catch (feedbackErr) {
+      console.error("Feedback tracking setup failed (answer was still posted):", feedbackErr);
+    }
   } catch (err) {
     // Best-effort: let the user know something broke instead of silently
     // never replying.
@@ -127,4 +179,72 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ ok: true });
+}
+
+/**
+ * Handles a reaction_added event on one of the bot's own tracked answers.
+ * Ignores reactions on anything else (including the bot's own 👍/👎 hint
+ * reactions, and reactions on messages we never recorded), and ignores a
+ * reaction from the bot itself so its own hint reactions never get counted
+ * as feedback. On a 👎, posts a short in-thread ask for what went wrong.
+ */
+async function handleReaction(event: SlackEvent): Promise<void> {
+  if (!event.item || event.item.type !== "message" || !event.reaction || !event.user) return;
+
+  const botUserId = await getBotUserId().catch(() => null);
+  if (botUserId && event.user === botUserId) return;
+
+  let rating: "up" | "down" | null = null;
+  if (UP_REACTIONS.has(event.reaction)) rating = "up";
+  else if (DOWN_REACTIONS.has(event.reaction)) rating = "down";
+  if (!rating) return;
+
+  try {
+    const row = await setFeedbackRating({
+      channel: event.item.channel,
+      messageTs: event.item.ts,
+      rating,
+      ratedByUserId: event.user,
+    });
+    if (!row) return; // Reaction on a message we aren't tracking.
+
+    if (rating === "down") {
+      await postSlackMessage({
+        channel: event.item.channel,
+        text: "Thanks for the feedback — mind replying here with what went wrong? It'll help improve future answers.",
+        threadTs: row.thread_ts,
+      });
+    }
+  } catch (err) {
+    console.error("Failed to record Slack reaction feedback:", err);
+  }
+}
+
+/**
+ * If this thread reply is the reason for a pending 👎 from the same person,
+ * records it and returns true (caller should stop, not treat it as a new
+ * question). Returns false for any other reply.
+ */
+async function tryConsumeFeedbackReason(event: SlackEvent): Promise<boolean> {
+  if (!event.thread_ts || !event.user || !event.text) return false;
+
+  try {
+    const row = await findAwaitingReason({
+      channel: event.channel,
+      threadTs: event.thread_ts,
+      userId: event.user,
+    });
+    if (!row) return false;
+
+    await setFeedbackReason(row.id, event.text);
+    await postSlackMessage({
+      channel: event.channel,
+      text: "Got it, thanks — logged for review. 🙏",
+      threadTs: event.thread_ts,
+    }).catch(() => {});
+    return true;
+  } catch (err) {
+    console.error("Failed to record Slack feedback reason:", err);
+    return false;
+  }
 }

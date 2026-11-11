@@ -50,6 +50,30 @@ export async function ensureSchema(): Promise<void> {
     WITH (lists = 100);
   `;
 
+  // One row per Slack answer the bot posts, so a later 👍/👎 reaction (and,
+  // on 👎, the free-text reason asked for in-thread) can be matched back to
+  // the question/answer it was rated against. See lib/slack.ts and
+  // app/api/slack/events/route.ts.
+  await sql`
+    CREATE TABLE IF NOT EXISTS kb_feedback (
+      id BIGSERIAL PRIMARY KEY,
+      channel TEXT NOT NULL,
+      message_ts TEXT NOT NULL,
+      thread_ts TEXT NOT NULL,
+      permalink TEXT,
+      asker_user_id TEXT,
+      question TEXT NOT NULL,
+      answer TEXT NOT NULL,
+      rating TEXT,
+      rated_by_user_id TEXT,
+      reason TEXT,
+      awaiting_reason BOOLEAN NOT NULL DEFAULT false,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      UNIQUE (channel, message_ts)
+    );
+  `;
+
   schemaEnsured = true;
 }
 
@@ -320,4 +344,129 @@ export async function getFirstChunkForFile(filePath: string): Promise<RetrievedC
     LIMIT 1;
   `;
   return (rows[0] as unknown as RetrievedChunk) ?? null;
+}
+
+export interface KbFeedbackRow {
+  id: number;
+  channel: string;
+  message_ts: string;
+  thread_ts: string;
+  permalink: string | null;
+  asker_user_id: string | null;
+  question: string;
+  answer: string;
+  rating: "up" | "down" | null;
+  rated_by_user_id: string | null;
+  reason: string | null;
+  awaiting_reason: boolean;
+  created_at: string;
+}
+
+/** Records a bot answer so a later reaction/reason can be matched back to it. */
+export async function recordFeedbackMessage(params: {
+  channel: string;
+  messageTs: string;
+  threadTs: string;
+  permalink: string | null;
+  askerUserId: string | null;
+  question: string;
+  answer: string;
+}): Promise<void> {
+  await ensureSchema();
+  await sql`
+    INSERT INTO kb_feedback (channel, message_ts, thread_ts, permalink, asker_user_id, question, answer)
+    VALUES (${params.channel}, ${params.messageTs}, ${params.threadTs}, ${params.permalink},
+            ${params.askerUserId}, ${params.question}, ${params.answer})
+    ON CONFLICT (channel, message_ts) DO NOTHING;
+  `;
+}
+
+/**
+ * Applies a 👍/👎 reaction to the tracked message it landed on. Returns the
+ * updated row (so the caller can decide whether to kick off the in-thread
+ * "what went wrong?" follow-up), or null if this message isn't one we're
+ * tracking (e.g. a reaction on some other message in the channel).
+ */
+export async function setFeedbackRating(params: {
+  channel: string;
+  messageTs: string;
+  rating: "up" | "down";
+  ratedByUserId: string;
+}): Promise<KbFeedbackRow | null> {
+  await ensureSchema();
+  const { rows } = await sql`
+    UPDATE kb_feedback
+    SET rating = ${params.rating},
+        rated_by_user_id = ${params.ratedByUserId},
+        awaiting_reason = (${params.rating} = 'down'),
+        updated_at = now()
+    WHERE channel = ${params.channel} AND message_ts = ${params.messageTs}
+    RETURNING *;
+  `;
+  return (rows[0] as unknown as KbFeedbackRow) ?? null;
+}
+
+/**
+ * Finds a feedback row still waiting on its "what went wrong?" reply --
+ * i.e. the person who just 👎'd this thread replied in it. Scoped to the
+ * same thread and the same user who gave the 👎, so an unrelated reply
+ * from someone else isn't mistaken for the reason.
+ */
+export async function findAwaitingReason(params: {
+  channel: string;
+  threadTs: string;
+  userId: string;
+}): Promise<KbFeedbackRow | null> {
+  await ensureSchema();
+  const { rows } = await sql`
+    SELECT * FROM kb_feedback
+    WHERE channel = ${params.channel}
+      AND thread_ts = ${params.threadTs}
+      AND rated_by_user_id = ${params.userId}
+      AND awaiting_reason = true
+    ORDER BY created_at DESC
+    LIMIT 1;
+  `;
+  return (rows[0] as unknown as KbFeedbackRow) ?? null;
+}
+
+export async function setFeedbackReason(id: number, reason: string): Promise<void> {
+  await ensureSchema();
+  await sql`
+    UPDATE kb_feedback
+    SET reason = ${reason}, awaiting_reason = false, updated_at = now()
+    WHERE id = ${id};
+  `;
+}
+
+/** All 👎'd answers, newest first -- backs the /admin/feedback page. */
+export async function listBadFeedback(limit = 200): Promise<KbFeedbackRow[]> {
+  await ensureSchema();
+  const { rows } = await sql`
+    SELECT * FROM kb_feedback
+    WHERE rating = 'down'
+    ORDER BY created_at DESC
+    LIMIT ${limit};
+  `;
+  return rows as unknown as KbFeedbackRow[];
+}
+
+export interface FeedbackSummary {
+  up: number;
+  down: number;
+  unrated: number;
+}
+
+/** Overall counts across all tracked answers -- gives the admin page a sense of the ratio. */
+export async function getFeedbackSummary(): Promise<FeedbackSummary> {
+  await ensureSchema();
+  const { rows } = await sql`
+    SELECT
+      COUNT(*) FILTER (WHERE rating = 'up') AS up,
+      COUNT(*) FILTER (WHERE rating = 'down') AS down,
+      COUNT(*) FILTER (WHERE rating IS NULL) AS unrated
+    FROM kb_feedback;
+  `;
+  const row = rows[0] as { up: string; down: string; unrated: string };
+  return { up: Number(row.up), down: Number(row.down), unrated: Number(row.unrated) };
 }

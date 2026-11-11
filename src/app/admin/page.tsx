@@ -8,6 +8,21 @@ interface UserSummary {
   createdAt: string;
 }
 
+interface FeedbackItem {
+  id: number;
+  question: string;
+  answer: string;
+  reason: string | null;
+  permalink: string | null;
+  created_at: string;
+}
+
+interface FeedbackSummary {
+  up: number;
+  down: number;
+  unrated: number;
+}
+
 export default function AdminPage() {
   const [secret, setSecret] = useState("");
   const [unlocked, setUnlocked] = useState(false);
@@ -25,13 +40,32 @@ export default function AdminPage() {
   const [ingestResult, setIngestResult] = useState<string | null>(null);
   const [ingestError, setIngestError] = useState<string | null>(null);
 
+  const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([]);
+  const [feedbackSummary, setFeedbackSummary] = useState<FeedbackSummary | null>(null);
+  const [feedbackError, setFeedbackError] = useState<string | null>(null);
+
   async function loadUsers() {
     const res = await fetch("/api/admin/users").then((r) => r.json());
     if (res.ok) setUsers(res.users);
   }
 
+  async function loadFeedback() {
+    setFeedbackError(null);
+    try {
+      const res = await fetch("/api/admin/feedback").then((r) => r.json());
+      if (!res.ok) throw new Error(res.error || "Failed to load feedback.");
+      setFeedbackItems(res.items);
+      setFeedbackSummary(res.summary);
+    } catch (e) {
+      setFeedbackError(e instanceof Error ? e.message : String(e));
+    }
+  }
+
   useEffect(() => {
-    if (unlocked) loadUsers();
+    if (unlocked) {
+      loadUsers();
+      loadFeedback();
+    }
   }, [unlocked]);
 
   async function unlock() {
@@ -155,6 +189,49 @@ export default function AdminPage() {
           </button>
           {ingestResult && <p className="text-xs text-ok mt-3">{ingestResult}</p>}
           {ingestError && <p className="text-xs text-danger mt-3">{ingestError}</p>}
+        </div>
+
+        <div className="bg-navy-soft border border-navy-soft rounded-lg p-6 mb-6">
+          <h2 className="font-serif font-semibold text-cream mb-3">Slack answer feedback</h2>
+          <p className="text-xs text-cream-dim mb-3">
+            Every Slack answer gets a 👍/👎 reaction hint. A 👎 asks the person in-thread what went wrong; that
+            reply (if given) shows up below alongside the question and answer.
+          </p>
+          {feedbackSummary && (
+            <p className="text-xs text-cream-dim mb-3">
+              👍 {feedbackSummary.up} · 👎 {feedbackSummary.down} · unrated {feedbackSummary.unrated}
+            </p>
+          )}
+          {feedbackError && <p className="text-xs text-danger mb-3">{feedbackError}</p>}
+          {feedbackItems.length === 0 && !feedbackError && (
+            <p className="text-sm text-cream-dim">No 👎 feedback yet.</p>
+          )}
+          <ul className="space-y-3">
+            {feedbackItems.map((f) => (
+              <li key={f.id} className="border border-navy-soft rounded px-3 py-2">
+                <p className="text-sm text-cream font-medium">{f.question}</p>
+                <p className="text-xs text-cream-dim mt-1 whitespace-pre-wrap">{f.answer}</p>
+                {f.reason && (
+                  <p className="text-xs text-danger mt-2">
+                    <span className="font-semibold">What went wrong:</span> {f.reason}
+                  </p>
+                )}
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-xs text-cream-dim">{new Date(f.created_at).toLocaleString()}</span>
+                  {f.permalink && (
+                    <a
+                      href={f.permalink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-orange hover:underline"
+                    >
+                      View in Slack →
+                    </a>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="bg-navy-soft border border-navy-soft rounded-lg p-6 mb-6">
